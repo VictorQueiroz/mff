@@ -1,0 +1,25 @@
+import "post.txt";
+
+alias Uint8 = uint8;
+alias ObjectId = Optional<StrictSize<Vector<Uint8>, 12>>;
+
+type User {
+    user {
+        ObjectId id;
+        string name;
+        Optional<uint32> age;
+        geo.data.Address address;
+        Vector<Post> posts;
+    }
+}
+
+namespace geo {
+    namespace data {
+        type Address {
+            address {
+                string streetName;
+                uint32 streetNumber;
+            }
+        }
+    }
+}

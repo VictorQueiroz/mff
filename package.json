@@ -1,0 +1,16 @@
+{
+  "devDependencies": {
+    "@types/node": "^10.1.2",
+    "nan": "^2.10.0",
+    "sarg": "^1.1.3",
+    "ts-node": "^6.0.3",
+    "typescript": "^2.8.3"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/sarg --require=ts-node/register --bail -r test"
+  },
+  "dependencies": {
+    "bindings": "^1.3.0",
+    "cyclic-rc": "^1.0.4"
+  }
+}

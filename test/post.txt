@@ -1,0 +1,7 @@
+namespace comment {
+    import "comment.txt";
+}
+
+type Post {
+    post -> Vector<comment.Comment> comments
+}
