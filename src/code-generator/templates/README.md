@@ -1,0 +1,1 @@
+Files in this folder are supposed to be used as templates. All files are going to be transpilled by babel when transforming schema in JS code and used across the process of code generation.

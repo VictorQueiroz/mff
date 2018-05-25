@@ -1,0 +1,1 @@
+export { default as ContainerDeclarationInterpreter } from './container-declaration-interpreter';
