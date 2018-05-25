@@ -12,6 +12,20 @@ class ContextScanner {
     }
 
     match(expressionPath: string[]) {
+        const path = this.parser.path;
+        let result: string[][];
+
+        for(let i = path.length - 1; i >= 0; i--) {
+            result = this._match(path.slice(0, i).concat(expressionPath));
+
+            if(result.length)
+                return result;
+        }
+
+        return this._match(expressionPath);
+    }
+
+    _match(expressionPath: string[]) {
         const matches = [];
         let body = this.parser.ast;
         let expressionIndex = 0;
