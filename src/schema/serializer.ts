@@ -87,11 +87,8 @@ export default class Serializer {
 
     writeString(n: string) {
         const str = Buffer.from(n, 'utf8');
-        const length = str.byteLength;
 
-        this.writeUInt32(length);
-
-        this.checkLength(length);
-        this.offset += str.copy(this.view, this.offset, 0, length);
+        this.writeUInt32(str.byteLength);
+        this.writeBuffer(str);
     }
 }
