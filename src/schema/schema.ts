@@ -116,7 +116,7 @@ class Schema {
         return value[1];
     }
 
-    private createObject(container: Container, params: any): any {
+    createObject(container: Container, params: any): any {
         return [container.name, params];
     }
 
@@ -126,7 +126,7 @@ class Schema {
         if(containers.indexOf(name) == -1)
             throw new Error(`Expected ${containers.join(' or ')} but got ${name} instead`);
 
-        this.encode(name, this.getContainerParams(value));
+        this.encode(value);
     }
 
     decodeTemplate(deserializer: Deserializer, template: ParamTemplate, result: any, prop: PropertyType) {
@@ -199,7 +199,9 @@ class Schema {
         }
     }
 
-    encode(name: string, props: any = {}) {
+    encode(object: any) {
+        const name = this.getContainerName(object);
+        const props = this.getContainerParams(object);
         const container = this.containers.get(name);
 
         if(!container)
