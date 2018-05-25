@@ -44,6 +44,7 @@ class ASTParser {
     scanner: ContextScanner;
     options: ASTParserOptions;
     containers: Container[];
+    namespaceSeparator: string;
     templateProcessors: Map<string, TemplateProcessor<any>>
 
     constructor({ text, scanner }: ASTParserArgument, options: ASTParserOptions) {
@@ -57,6 +58,7 @@ class ASTParser {
         this.scanner = scanner || new ContextScanner(this);
         this.options = options;
         this.containers = options.containers;
+        this.namespaceSeparator = options.namespaceSeparator || '::';
         this.templateProcessors = new Map();
 
         this.templateProcessors.set('Vector', new VectorProcessor(this));
@@ -107,7 +109,7 @@ class ASTParser {
 
                 return {
                     type: Params.Reference,
-                    containers: matches.map(m => m.join(this.options.namespaceSeparator))
+                    containers: matches.map(m => m.join(this.namespaceSeparator))
                 };
             }
             case Syntax.Template: {
@@ -131,7 +133,7 @@ class ASTParser {
 
                 return {
                     type: Params.Reference,
-                    containers: matches.map(m => m.join(this.options.namespaceSeparator))
+                    containers: matches.map(m => m.join(this.namespaceSeparator))
                 };
             }
         }
@@ -194,9 +196,9 @@ class ASTParser {
                 const crcValue = `${parent.name} ${this.createCrcString(ast)}`;
                 this.containers.push({
                     id: crc.crc_32(crcValue),
-                    type: this.path.concat([parent.name]).join(this.options.namespaceSeparator),
+                    type: this.path.concat([parent.name]).join(this.namespaceSeparator),
                     params,
-                    name: this.path.concat([ast.name]).join(this.options.namespaceSeparator)
+                    name: this.path.concat([ast.name]).join(this.namespaceSeparator)
                 });
                 return;
             }
