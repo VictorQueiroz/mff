@@ -14,11 +14,16 @@ type User {
 }
 
 namespace geo {
+    type TURL {
+        URL -> string href
+        URLComplex -> string protocol, uint16 port
+    }
     namespace data {
         type Address {
             address {
                 string streetName;
                 uint32 streetNumber;
+                TURL url;
             }
         }
     }

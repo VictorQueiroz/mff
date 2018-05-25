@@ -18,26 +18,32 @@ astParser.parse();
 export default function() {
     return {
         'it should encode complex containers': function() {
-            const buffer = new Schema(astParser.containers).encode('user', {
+            const buffer = new Schema(astParser.containers).encode(['user', {
                 name: 'simple user',
                 age: 10,
                 address: ['geo.data.address', {
                     streetName: 'Av. 2002',
-                    streetNumber: 2010
+                    streetNumber: 2010,
+                    url: ['geo.URL', {
+                        href: ''
+                    }]
                 }],
                 posts: [
                     ['post', {
                         comments: []
                     }]
                 ]
-            });
+            }]);
 
             assert.deepEqual(new Schema(astParser.containers).decode(buffer), ['user', {
                 name: 'simple user',
                 age: 10,
                 address: ['geo.data.address', {
                     streetName: 'Av. 2002',
-                    streetNumber: 2010
+                    streetNumber: 2010,
+                    url: ['geo.URL', {
+                        href: ''
+                    }]
                 }],
                 posts: [
                     ['post', {
@@ -49,16 +55,19 @@ export default function() {
 
         'it should perform validation when optional fields receive value': function() {
             const id = crypto.randomBytes(12);
-            const buffer = new Schema(astParser.containers).encode('user', {
+            const buffer = new Schema(astParser.containers).encode(['user', {
                 id,
                 name: 'simple user',
                 age: 10,
                 address: ['geo.data.address', {
                     streetName: 'Av. 2002',
-                    streetNumber: 2010
+                    streetNumber: 2010,
+                    url: ['geo.URL', {
+                        href: ''
+                    }]
                 }],
                 posts: []
-            });
+            }]);
 
             assert.deepEqual(new Schema(astParser.containers).decode(buffer), ['user', {
                 id,
@@ -66,7 +75,10 @@ export default function() {
                 age: 10,
                 address: ['geo.data.address', {
                     streetName: 'Av. 2002',
-                    streetNumber: 2010
+                    streetNumber: 2010,
+                    url: ['geo.URL', {
+                        href: ''
+                    }]
                 }],
                 posts: []
             }]);
