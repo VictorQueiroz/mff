@@ -8,7 +8,7 @@ import TemplateProcessor from './template-processor';
 import VectorProcessor from './vector-processor';
 import OptionalProcessor from './optional-processor';
 
-interface SchemaOptions {
+export interface SchemaOptions {
     templateProcessors?: Map<string, TemplateProcessor>;
 }
 
