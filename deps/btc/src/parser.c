@@ -17,7 +17,11 @@ void btc_parser_init(btc_parser** parser_ptr, btc_tokenizer* tokenizer) {
 
     parser->result = list;
     parser->status = BTC_OK;
-    parser->current_token = tokenizer->first_token;
+    parser->current_token = tokenizer->tokens_list->first_item;
+}
+
+void btc_parser_get_token(btc_parser* parser, btc_token** token_output) {
+    *token_output = parser->current_token->value;
 }
 
 void btc_parser_destroy(btc_parser* parser){
@@ -29,16 +33,19 @@ void btc_parser_destroy(btc_parser* parser){
  * Check if current token has the following value starting from `index`
  */
 int btc_parser_peek_from_index(btc_parser* parser, const char* value, size_t index) {
-    btc_token* token = parser->current_token;
+    btc_linked_token* linked = parser->current_token;
+
     size_t current_index = 0;
 
     while(current_index < index) {
-        if(token->next_token == NULL)
+        if(linked->next_item == NULL)
             return 0;
 
-        token = token->next_token;
+        linked = linked->next_item;
         ++current_index;
     }
+
+    btc_token* token = linked->value;
 
     if(strncmp(token->value, value, strlen(value)) == 0)
         return 1;
@@ -59,14 +66,16 @@ int btc_parser_peek(btc_parser* parser, const char* value) {
  * with current token before it's flushed
  */
 int btc_parser_consume(btc_parser* parser, btc_token** token) {
-    if(parser->current_token == NULL)
+    if(parser->current_token == NULL) {
+        fprintf(stderr, "Unexpected end\n");
         return BTC_NO_TOKEN;
-
-    if(token != NULL) {
-        *token = parser->current_token;
     }
 
-    parser->current_token = parser->current_token->next_token;
+    if(token != NULL) {
+        *token = parser->current_token->value;
+    }
+
+    parser->current_token = parser->current_token->next_item;
 
     return BTC_OK;
 }
@@ -76,10 +85,12 @@ int btc_parser_consume(btc_parser* parser, btc_token** token) {
  */
 int btc_parser_expect(btc_parser* parser, const char* string) {
     btc_token* token;
-    btc_parser_consume(parser, &token);
+
+    if(btc_parser_consume(parser, &token) != BTC_OK)
+        return 0;
 
     if(strncmp(string, token->value, strlen(string)) != 0) {
-        fprintf(stderr, "expected %s but got %s instead\n", string, token->value);
+        fprintf(stderr, "expected \"%s\" in line number %d but got \"%s\" instead\n", string, token->range.start_line_number, token->value);
         return 0;
     }
     return 1;
@@ -97,6 +108,7 @@ btc_string btc_consume_string(btc_parser* parser, int* error) {
     btc_string result = {};
 
     if(token->type != BTC_TOKEN_LITERAL_STRING) {
+        fprintf(stderr, "Expected literal string but got %s instead\n", btc_token_type_to_readable(token));
         if(error != NULL) {
             *error = BTC_UNEXPECTED_TOKEN;
         }
@@ -154,21 +166,25 @@ int btc_parser_scan_alias(btc_parser* parser, btc_ast_item* result) {
 }
 
 /**
- * scan ast into `result` 
+ * Scan ast into `result` 
  */
 int btc_parser_scan(btc_parser* parser, btc_ast_item* result) {
+    int status = BTC_OK;
+
     if(btc_parser_peek(parser, "alias"))
-        return btc_parser_scan_alias(parser, result);
+        status = btc_parser_scan_alias(parser, result);
     else if(btc_parser_peek(parser, "type"))
         btc_parser_scan_type_group_definition(parser, result);
     else if(btc_parser_peek(parser, "namespace"))
         btc_parser_scan_namespace(parser, result);
     else if(btc_parser_peek(parser, "import"))
-        return btc_parser_scan_import(parser, result);
-    else
-        return BTC_UNEXPECTED_TOKEN;
+        status = btc_parser_scan_import(parser, result);
+    else {
+        fprintf(stderr, "Unexpected token %s at line %d\n", btc_token_type_to_readable(parser->current_token->value), parser->current_token->value->range.start_line_number);
+        status = BTC_UNEXPECTED_TOKEN;
+    }
 
-    return BTC_OK;
+    return status;
 }
 
 int btc_parser_scan_namespace(btc_parser* parser, btc_ast_item* ast_item) {
@@ -330,7 +346,7 @@ int btc_parser_scan_container_short_body(btc_parser* parser, btc_ast_list* body)
 }
 
 void btc_get_token(btc_parser* parser, btc_token** token_ptr) {
-    *token_ptr = parser->current_token;
+    *token_ptr = parser->current_token->value;
 }
 
 int btc_parser_scan_literal_expression(btc_parser* parser, btc_ast_item* result) {
