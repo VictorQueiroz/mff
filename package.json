@@ -11,7 +11,8 @@
     "nan": "^2.10.0",
     "sarg": "^1.1.4",
     "ts-node": "^6.0.3",
-    "typescript": "^2.8.3"
+    "tslint": "^5.10.0",
+    "typescript": "^3.0.0-dev.20180522"
   },
   "scripts": {
     "test": "./node_modules/.bin/sarg --require=ts-node/register --bail -r test"
