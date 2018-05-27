@@ -4,6 +4,7 @@
         "sources": [
             "src/ast/ast_item.c",
             "src/ast/ast_list.c",
+            "src/ast/comments_list.c",
             "src/ast/container_declaration.c",
             "src/ast/container_group.c",
             "src/ast/container_param.c",
@@ -13,7 +14,9 @@
             "src/ast/template.c",
             "src/character.c",
             "src/parser.c",
-            "src/tokenizer.c"
+            "src/token.c",
+            "src/tokenizer.c",
+            "src/tokens_list.c"
         ],
         "include_dirs": [
             "src",
