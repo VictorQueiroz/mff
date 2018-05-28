@@ -1,8 +1,10 @@
-# btc-js
+# message-ff
+
+Full implementation of a Message Format Framework, it'll help you format messages with its contents using an intuitive language for type definitions.
 
 ## Usage
 ```js
-import { Schema, ASTParser } from 'btc-js';
+import { Schema, ASTParser } from 'message-ff';
 import * as crypto from 'crypto';
 
 const parser = new ASTParser({
