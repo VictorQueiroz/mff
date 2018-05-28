@@ -22,6 +22,7 @@
     "binary",
     "language"
   ],
+  "main": "lib/index.js",
   "dependencies": {
     "bindings": "^1.3.0",
     "cyclic-rc": "^1.0.4",
