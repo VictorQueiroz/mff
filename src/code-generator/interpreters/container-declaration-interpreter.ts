@@ -62,10 +62,21 @@ export default class ContainerDeclarationInterpreter extends Interpreter<NodeCon
     }
 
     createContainerMethods(node: NodeContainerDeclaration, body: Array<t.ClassMethod | t.ClassProperty | t.ClassPrivateProperty | t.TSDeclareMethod | t.TSIndexSignature>) {
-        const constructorParams = [{
-            ...t.identifier('params'),
-            typeAnnotation: t.tsTypeAnnotation(t.tsTypeReference(t.identifier(node.name + 'Params')))
-        }];
+        const paramsLength = node.body.reduce((total, node) => {
+            if(node.type == Syntax.ContainerParam)
+                return total + 1;
+
+            return total;
+        }, 0);
+        const constructorParams = [];
+
+        if(paramsLength > 0) {
+            constructorParams.push({
+                ...t.identifier('params'),
+                typeAnnotation: t.tsTypeAnnotation(t.tsTypeReference(t.identifier(node.name + 'Params')))
+            });
+        }
+
         const paramsAssignment = node.body.reduce((body, param) => {
             if(param.type != Syntax.ContainerParam)
                 return body;
