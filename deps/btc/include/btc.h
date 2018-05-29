@@ -29,6 +29,11 @@ extern "C" {
     if(status != BTC_OK)\
         return status;
 
+
+#define BTC_CHECK_STATUS_VOID(status) \
+    if(status != Ok)\
+        return;
+
 #include "../src/tokenizer.h"
 #include "../src/parser.h"
 
