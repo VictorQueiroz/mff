@@ -28,6 +28,10 @@ export default class ContainerDeclarationInterpreter extends Interpreter<NodeCon
         return result;
     }
 
+    getClassDeclarationName(node: NodeContainerDeclaration): t.Identifier {
+        return t.identifier(node.name);
+    }
+
     interpret(node: NodeContainerDeclaration) {
         const classBody = this.processContainerParams(node.body);
         const body = node.body.reduce((results, item) => {
@@ -45,7 +49,7 @@ export default class ContainerDeclarationInterpreter extends Interpreter<NodeCon
         this.createContainerMethods(node, classBody);
 
         const paramsInterface = t.tsInterfaceDeclaration(t.identifier(`${node.name}Params`), null, null, t.tsInterfaceBody(body));
-        const classDeclaration = t.classDeclaration(t.identifier(node.name), t.identifier('Container'), t.classBody(classBody));
+        const classDeclaration = t.classDeclaration(this.getClassDeclarationName(node), t.identifier('Container'), t.classBody(classBody));
         const container = this.generator.getContainer(node.name);
 
         if(!container)
