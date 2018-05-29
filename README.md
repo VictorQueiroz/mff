@@ -16,7 +16,6 @@ The code above declare a single container named `user` which have `id` and `name
 
 ```js
 import { Schema, ASTParser } from 'message-ff';
-import * as crypto from 'crypto';
 
 const parser = new ASTParser({
     text: `
