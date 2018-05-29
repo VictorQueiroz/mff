@@ -15,23 +15,21 @@ The code above declare a single container named `user` which have `id` and `name
 ## Usage
 
 ```js
-import { Schema, ASTParser } from 'message-ff';
+import { btc, Schema, ASTParser } from 'message-ff';
 
-const parser = new ASTParser({
-    text: `
-        alias ObjectId = StrictSize<string, 24>;
-        alias Date = int32;
-        type User {
-            user {
-                string id;
-                Vector<Post> posts;
-            }
+const parser = new ASTParser(btc.parse(`
+    alias ObjectId = StrictSize<string, 24>;
+    alias Date = int32;
+    type User {
+        user {
+            string id;
+            Vector<Post> posts;
         }
-        type Post {
-            post -> ObjectId id, string body, Date createdAt;
-        }
-    `
-}, {
+    }
+    type Post {
+        post -> ObjectId id, string body, Date createdAt;
+    }
+`), {
     directory: __dirname,
     containers: [],
     namespaceSeparator: '.'
