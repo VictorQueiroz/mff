@@ -15,9 +15,6 @@
   },
   "name": "btc-js",
   "version": "1.0.0",
-  "scripts": {
-    "test": "./node_modules/.bin/sarg --require=ts-node/register --bail -r test"
-  },
   "keywords": [
     "binary",
     "language"
