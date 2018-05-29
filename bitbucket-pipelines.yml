@@ -1,0 +1,10 @@
+image: node:8.11.2
+
+pipelines:
+  default:
+    - step:
+        caches:
+          - node
+        script: # Modify the commands below to build your repository.
+          - npm install
+          - make test
