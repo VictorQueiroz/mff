@@ -43,7 +43,7 @@ class Schema {
         }
     }
 
-    decodeGeneric(des: Deserializer, type: string): string | number {
+    decodeGeneric(des: Deserializer, type: string): string | number | boolean {
         switch(type) {
             case Generics.Double:
                 return des.readDouble();
@@ -63,6 +63,8 @@ class Schema {
                 return des.readUInt32();
             case Generics.String:
                 return des.readBuffer(des.readUInt32()).toString('utf8');
+            case Generics.Boolean:
+                return des.readBoolean();
             default:
                 throw new Error(`Can't decode generic of "${type}"`);
         }
@@ -98,6 +100,9 @@ class Schema {
                 break;
             case Generics.String:
                 serializer.writeString(value);
+                break;
+            case Generics.Boolean:
+                serializer.writeBoolean(value);
                 break;
             default:
                 throw new Error(`Can't encode generic of "${type}"`);

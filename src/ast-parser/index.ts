@@ -79,6 +79,7 @@ class ASTParser {
             case Generics.Double:
             case Generics.Int8:
             case Generics.UInt8:
+            case Generics.Boolean:
             case Generics.Int32:
             case Generics.Int64:
             case Generics.Int16:
