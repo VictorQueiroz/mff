@@ -1,6 +1,20 @@
 import Parser from './index';
 import { Syntax } from './constants';
 
+/**
+ * Scan parser context and look for container 
+ * matches based on expression path.
+ *
+ * -- Brief description --
+ * An expression path is an array of strings determining a container reference, 
+ * either it points directly to a container type (matching various containers) or 
+ * it points directly to a single container.
+ * 
+ * Context scanner will look into AST trying to find namespaces that matches the 
+ * given path.
+ *
+ * TODO: Improve searching algorithm and break it in many parts
+ */
 class ContextScanner {
     /**
      * Root parser
@@ -45,7 +59,7 @@ class ContextScanner {
                 if(expressionIndex == (expressionPath.length - 1)) {
                     if(item.type != Syntax.ContainerGroup)
                         continue;
-                    
+
                     if(item.name == expressionPath[expressionIndex]) {
                         // collect container declaration names
                         for(let j = 0; j < item.body.length; j++) {
