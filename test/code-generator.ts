@@ -38,8 +38,6 @@ export default function() {
             const program = ast.generate();
             const code = generator(program).code;
 
-            fs.writeFileSync(__dirname + '/../test.schema.ts', code);
-
             const output = ts.transpileModule(code, {
                 compilerOptions: {
                     target: ts.ScriptTarget.ESNext,
