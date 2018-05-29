@@ -11,19 +11,12 @@ import { Params, Param } from './param';
 import ASTPreprocessor from './ast-preprocessor';
 import StrictSizeProcessor from './strict-size-processor';
 
-const btc = require('bindings')('btcjs');
-
 export interface ASTParserOptions {
     path?: string[];
     parent?: ASTParser;
     directory: string;
     containers: Container[];
     namespaceSeparator?: string;
-}
-
-export interface ASTParserArgument {
-    text: string;
-    scanner?: ContextScanner;
 }
 
 class ASTParser {
@@ -47,15 +40,15 @@ class ASTParser {
     namespaceSeparator: string;
     templateProcessors: Map<string, TemplateProcessor<any>>
 
-    constructor({ text, scanner }: ASTParserArgument, options: ASTParserOptions) {
+    constructor(ast: Node[], options: ASTParserOptions) {
         ASTParser.defineDefaultOptions(options);
 
-        this.ast = new ASTPreprocessor(btc.parse(text), {
+        this.ast = new ASTPreprocessor(ast, {
             directory: options.directory
         }).getResult();
         this.path = options.path || [];
         this.parent = options.parent;
-        this.scanner = scanner || new ContextScanner(this);
+        this.scanner = new ContextScanner(this);
         this.options = options;
         this.containers = options.containers;
         this.namespaceSeparator = options.namespaceSeparator || '::';

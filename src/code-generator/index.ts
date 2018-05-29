@@ -24,7 +24,6 @@ const babel = require('@babel/core');
 export default class CodeGenerator {
     private parser: ASTParser;
     private containers: Container[] = [];
-    private code: string;
     private ast: Node[];
     private path: string[] = [];
     private templateTransformers: Map<string, TemplateTransformer> = new Map();
@@ -32,12 +31,9 @@ export default class CodeGenerator {
         containerDeclaration: ContainerDeclarationInterpreter;
     };
 
-    constructor(contents: string, directory: string, options?: any) {
-        this.code = contents;
+    constructor(unprocessedAst: Node[], directory: string, options?: any) {
         this.containers = [];
-        this.parser = new ASTParser({
-            text: this.code
-        }, {
+        this.parser = new ASTParser(unprocessedAst, {
             containers: this.containers,
             directory,
             ...options

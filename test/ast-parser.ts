@@ -2,13 +2,12 @@ import ASTParser from '../src/ast-parser';
 import { Container } from '../src/ast-parser/constants';
 import { Params } from '../src/ast-parser/param';
 import * as assert from 'assert';
+import btc from '../src/btc';
 
 function parse(text: string) {
     const containers: Container[] = [];
 
-    new ASTParser({
-        text
-    }, {
+    new ASTParser(btc.parse(text), {
         directory: '',
         containers
     }).parse();

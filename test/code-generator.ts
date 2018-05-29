@@ -5,6 +5,7 @@ import * as assert from 'assert';
 import DefaultSchema from '../src/schema';
 import CodeGenerator from '../src/code-generator';
 import { Container } from '../src/ast-parser/constants';
+import btc from '../src/btc';
 
 const generator = require('@babel/generator').default;
 
@@ -32,7 +33,7 @@ export class Schema extends DefaultSchema {
 export default function() {
     return {
         'it should compile schema into code': function() {
-            const ast = new CodeGenerator(fs.readFileSync(__dirname + '/schema.txt', 'utf8'), __dirname, {
+            const ast = new CodeGenerator(btc.parse(fs.readFileSync(__dirname + '/schema.txt', 'utf8')), __dirname, {
                 namespaceSeparator: '.'
             });
             const program = ast.generate();

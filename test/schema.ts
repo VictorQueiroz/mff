@@ -2,12 +2,11 @@ import ASTParser from '../src/ast-parser';
 import Schema from '../src/schema';
 import * as assert from 'assert';
 import * as crypto from 'crypto';
+import btc from '../src/btc';
 
-const astParser = new ASTParser({
-    text: `
-        import "schema.txt";
-    `
-}, {
+const astParser = new ASTParser(btc.parse(`
+    import "schema.txt";
+`), {
     directory: __dirname,
     containers: [],
     namespaceSeparator: '.'
