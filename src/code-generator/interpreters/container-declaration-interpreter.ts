@@ -139,6 +139,9 @@ export default class ContainerDeclarationInterpreter extends Interpreter<NodeCon
                 case Generics.UInt64:
                     type = t.tsNumberKeyword();
                     break;
+                case Generics.Boolean:
+                    type = t.tsBooleanKeyword();
+                    break;
                 default:
                     type = t.tsTypeReference(t.identifier(paramType.value));
             }
