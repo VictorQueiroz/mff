@@ -19,6 +19,40 @@ namespace Btc {
         const char* LiteralNumber = "LiteralNumber";
         const char* MemberExpression = "MemberExpression";
     }
+
+    int Ok = BTC_OK;
+
+    class Parser {
+    public:
+        Parser(): text(text) {
+            btc_tokenizer_init(&tokenizer);
+        }
+        ~Parser() {
+            btc_parser_destroy(parser);
+            btc_tokenizer_destroy(tokenizer);
+        }
+        btc_ast_list* GetResult() {
+            return parser->result;
+        }
+        void Parse(const char* text) {
+            status = btc_tokenizer_scan(tokenizer, text);
+            BTC_CHECK_STATUS_VOID(status);
+
+            btc_parser_init(&parser, tokenizer);
+
+            status = btc_parse(parser);
+            BTC_CHECK_STATUS_VOID(status);
+        }
+        bool Failed() {
+            return status != Ok;
+        }
+    private:
+        int status;
+        const char* text;
+        btc_parser* parser;
+        btc_tokenizer* tokenizer;
+    };
+
     void ConvertAstItem(btc_ast_item* item, Local<Object> output);
 }
 
@@ -177,34 +211,26 @@ void Btc::ConvertAstItem(btc_ast_item* item, Local<Object> result) {
 }
 
 NAN_METHOD(Ast::Parse) {
-    btc_tokenizer* tokenizer;
-    btc_tokenizer_init(&tokenizer);
+    Nan::HandleScope scope;
+    Btc::Parser* parser = new Btc::Parser();
 
-    Local<String> jsText = Local<String>::Cast(info[0]);
+    Local<String> jsText = Nan::To<String>(info[0]).ToLocalChecked();
     int length = jsText->Utf8Length();
-    char* text = (char*)malloc(length*sizeof(char));
+    char* text = (char*)malloc(length + 1);
     jsText->WriteUtf8(text, length);
     text[length] = '\0';
 
-    btc_tokenizer_scan(tokenizer, text);
+    parser->Parse(text);
 
-    btc_parser* parser;
-    btc_parser_init(&parser, tokenizer);
-    int status = btc_parse(parser);
-
-    if(status != BTC_OK) {
-        Nan::ThrowError("failed to parse");
+    if(parser->Failed()) {
+        Nan::ThrowError("Failed to parse");
         return;
     }
 
-    Local<Array> output = Array::New(Isolate::GetCurrent());
-
-    ConvertLinkedAstList(parser->result, output);
+    Local<Array> output = Nan::New<Array>();
+    ConvertLinkedAstList(parser->GetResult(), output);
 
     info.GetReturnValue().Set(output);
-
-    btc_parser_destroy(parser);
-    btc_tokenizer_destroy(tokenizer);
 }
 
 void Ast::Init(Local<Object> target) {
