@@ -11,6 +11,7 @@
     "sarg": "^1.1.4",
     "ts-node": "^6.0.3",
     "tslint": "^5.10.0",
+    "typedoc": "^0.11.1",
     "typescript": "^3.0.0-dev.20180522"
   },
   "name": "message-ff",
