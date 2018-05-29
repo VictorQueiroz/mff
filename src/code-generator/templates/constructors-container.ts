@@ -1,4 +1,4 @@
-class ConstructorsContainer {
+export class ConstructorsContainer {
     ids: Map<number, any>;
     names: Map<string, any>;
     constructor() {
