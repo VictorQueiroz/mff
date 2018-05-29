@@ -11,6 +11,9 @@ export interface NodeMemberExpression {
     right: string;
 }
 
+/**
+ * Node representing template expression (i.e. Vector<Vector<A>>)
+ */
 export interface NodeTemplate {
     type: Syntax.Template;
     arguments: Node[];
