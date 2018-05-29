@@ -92,7 +92,7 @@ export default class CodeGenerator {
     generate(): t.Program {
         const body: t.Statement[] = [
             ...this.getFileAst('templates/constructors-container.ts'),
-            new ContainerClassCreator(this).generate(this.parser.namespaceSeparator)
+            t.exportNamedDeclaration(new ContainerClassCreator(this).generate(this.parser.namespaceSeparator), [])
         ];
 
         for(let i = 0; i < this.ast.length; i++)
