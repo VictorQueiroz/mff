@@ -18,6 +18,12 @@ typedef struct _btc_tokenizer btc_tokenizer;
 
 #define BTC_TOKENIZER_CONFIG_IGNORE_COMMENTS 1
 
+/* Keywords count */
+#define BTC_KEYWORDS_COUNT 4
+
+/* The maximum size that a keyword can be */
+#define BTC_MAX_KEYWORD_LENGTH 32
+
 struct _btc_tokenizer {
     int flags;
     btc_tokens_list* tokens_list;

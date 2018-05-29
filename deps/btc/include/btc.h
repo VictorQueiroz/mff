@@ -14,13 +14,20 @@ extern "C" {
  */
 #define BTC_UNEXPECTED_END -2
 /**
- * Received unexpected token during parsing
+ * Found unexpected token value / type
  */
 #define BTC_UNEXPECTED_TOKEN -3
 /**
  * There is no token available for consuming
  */
 #define BTC_NO_TOKEN -4
+
+/**
+ * Assert status as BTC_OK or return status
+ */
+#define BTC_CHECK_STATUS(status)\
+    if(status != BTC_OK)\
+        return status;
 
 #include "../src/tokenizer.h"
 #include "../src/parser.h"

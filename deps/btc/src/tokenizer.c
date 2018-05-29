@@ -7,6 +7,14 @@
 #include <string.h>
 #include <stdio.h>
 
+/* Strings that should be taken as keywords */
+const char BTC_KEYWORDS[BTC_KEYWORDS_COUNT][BTC_MAX_KEYWORD_LENGTH] = {
+    "alias",
+    "type",
+    "namespace",
+    "import"
+};
+
 void btc_tokenizer_init(btc_tokenizer** tokenizer_ptr){
     *tokenizer_ptr = calloc(1, sizeof(btc_tokenizer));
 
@@ -53,14 +61,6 @@ void btc_tokenizer_push_token(btc_tokenizer* tokenizer, btc_token* token) {
     btc_add_token(tokenizer->tokens_list, token);
 }
 
-void btc_tokenizer_push_keyword(btc_tokenizer* tokenizer, const char* value) {
-    btc_token* token;
-    btc_token_init(&token, BTC_TOKEN_KEYWORD);
-    token->value = value;
-
-    btc_tokenizer_push_token(tokenizer, token);
-}
-
 int btc_tokenizer_eof(btc_tokenizer* tokenizer){
     if(tokenizer->offset < tokenizer->string_length)
         return 0;
@@ -90,6 +90,22 @@ int btc_tokenizer_is_identifier_part(btc_tokenizer* tokenizer) {
     return btc_tokenizer_is_identifier_start(tokenizer);
 }
 
+int btc_tokenizer_is_keyword(const char* string) {
+    int i;
+
+    for(i = 0; i < BTC_KEYWORDS_COUNT; i++) {
+        const char* keyword_value = BTC_KEYWORDS[i];
+
+        if(strlen(string) != strlen(keyword_value))
+            continue;
+
+        if(strncmp(string, keyword_value, strlen(string)) == 0)
+            return 1;
+    }
+
+    return 0;
+}
+
 void btc_tokenizer_scan_identifier(btc_tokenizer* tokenizer) {
     size_t start_offset = tokenizer->offset;
 
@@ -114,11 +130,19 @@ void btc_tokenizer_scan_identifier(btc_tokenizer* tokenizer) {
     char* buffer;
     btc_tokenizer_slice_string(tokenizer, &buffer, start_offset, end_offset);
 
+    int type;
+
+    if(btc_tokenizer_is_keyword(buffer))
+        type = BTC_TOKEN_KEYWORD;
+    else
+        type = BTC_TOKEN_IDENTIFIER;
+
+    btc_token* token;
+    btc_token_init(&token, type);
+
     range.end_line_number = tokenizer->line_number;
     range.end_offset = end_offset;
 
-    btc_token* token;
-    btc_token_init(&token, BTC_TOKEN_IDENTIFIER);
 
     token->value = buffer;
     token->range = range;
@@ -153,53 +177,6 @@ int btc_tokenizer_scan_punctuator(btc_tokenizer* tokenizer){
 
     btc_tokenizer_push_token(tokenizer, token);
     return BTC_OK;
-}
-
-int btc_tokenizer_is_keyword(btc_tokenizer* tokenizer) {
-    if(!btc_tokenizer_is_identifier_start(tokenizer))
-        return 0;
-
-    if(btc_tokenizer_compare(tokenizer, "alias"))
-        return 1;
-    else if(btc_tokenizer_compare(tokenizer, "type"))
-        return 1;
-    else if(btc_tokenizer_compare(tokenizer, "namespace"))
-        return 1;
-    else if(btc_tokenizer_compare(tokenizer, "import"))
-        return 1;
-    return 0;
-}
-
-void btc_tokenizer_scan_keyword(btc_tokenizer* tokenizer) {
-    size_t start_offset = tokenizer->offset;
-
-    do {
-        tokenizer->offset++;
-    } while(!btc_tokenizer_eof(tokenizer) && btc_tokenizer_is_identifier_part(tokenizer));
-
-    size_t end_offset = tokenizer->offset;
-
-    if(end_offset == start_offset)
-        fprintf(stderr, "unexpected token \"%c\"\n", tokenizer->string[start_offset]);
-
-    char* buffer;
-    btc_tokenizer_slice_string(tokenizer, &buffer, start_offset, end_offset);
-
-    btc_token_range range = {
-        tokenizer->line_number,
-        tokenizer->line_number,
-        start_offset,
-        tokenizer->offset
-    };
-
-    btc_token* token;
-    btc_token_init(&token, BTC_TOKEN_KEYWORD);
-
-    token->range = range;
-    token->value = buffer;
-    token->allocated = buffer;
-
-    btc_tokenizer_push_token(tokenizer, token);
 }
 
 int btc_tokenizer_scan_string(btc_tokenizer* tokenizer) {
@@ -404,8 +381,6 @@ int btc_tokenizer_identify(btc_tokenizer* tokenizer) {
         status = btc_tokenizer_scan_comment_block(tokenizer, "/*", "*/");
     } else if(btc_tokenizer_is_number_start(tokenizer)) {
         btc_tokenizer_scan_number(tokenizer);
-    } else if(btc_tokenizer_is_keyword(tokenizer)) {
-        btc_tokenizer_scan_keyword(tokenizer);
     } else if(ch == 0x22) { // string start
         btc_tokenizer_scan_string(tokenizer);
     } else if(btc_tokenizer_is_identifier_start(tokenizer)) {
