@@ -4,6 +4,7 @@ import {
     Node
 } from '../ast-parser/node';
 import {
+    ContainerGroupInterpreter,
     ContainerDeclarationInterpreter
 } from './interpreters';
 import ASTParser from '../ast-parser';
@@ -28,6 +29,7 @@ export default class CodeGenerator {
     private path: string[] = [];
     private templateTransformers: Map<string, TemplateTransformer> = new Map();
     public interpreters: {
+        containerGroup: ContainerGroupInterpreter;
         containerDeclaration: ContainerDeclarationInterpreter;
     };
 
@@ -48,6 +50,7 @@ export default class CodeGenerator {
         this.templateTransformers.set('StrictSize', new StrictSizeTransformer(this));
 
         this.interpreters = {
+            containerGroup: new ContainerGroupInterpreter(this),
             containerDeclaration: new ContainerDeclarationInterpreter(this)
         };
     }
@@ -114,24 +117,7 @@ export default class CodeGenerator {
                 ];
             }
             case Syntax.ContainerGroup: {
-                const body = node.body.reduce((list, node) => list.concat(this.process(node)), <t.Declaration[]>[]);
-                const tsTypes = [];
-
-                for(let i = 0; i < node.body.length; i++) {
-                    const item = node.body[i];
-
-                    if(item.type != Syntax.ContainerDeclaration)
-                        continue;
-
-                    tsTypes.push(t.tsTypeReference(t.identifier(item.name)));
-                }
-
-                const typeAliasDeclaration = t.tsTypeAliasDeclaration(t.identifier(node.name), null, t.tsUnionType(tsTypes));
-
-                return [
-                    t.exportNamedDeclaration(typeAliasDeclaration, []),
-                    ...body
-                ];
+                return this.interpreters.containerGroup.interpret(node);
             }
             case Syntax.ContainerDeclaration:
                 return this.interpreters.containerDeclaration.interpret(node);
