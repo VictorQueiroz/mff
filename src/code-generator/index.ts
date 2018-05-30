@@ -32,6 +32,7 @@ export default class CodeGenerator {
         containerGroup: ContainerGroupInterpreter;
         containerDeclaration: ContainerDeclarationInterpreter;
     };
+    public containerClassCreator: ContainerClassCreator;
 
     constructor(unprocessedAst: Node[], directory: string, options?: any) {
         this.containers = [];
@@ -53,6 +54,8 @@ export default class CodeGenerator {
             containerGroup: new ContainerGroupInterpreter(this),
             containerDeclaration: new ContainerDeclarationInterpreter(this)
         };
+
+        this.containerClassCreator = new ContainerClassCreator(this);
     }
 
     public getContainers() {
@@ -91,7 +94,7 @@ export default class CodeGenerator {
     generate(): t.Program {
         const body: t.Statement[] = [
             ...this.getFileAst('templates/constructors-container.ts'),
-            t.exportNamedDeclaration(new ContainerClassCreator(this).generate(this.parser.namespaceSeparator), [])
+            t.exportNamedDeclaration(this.containerClassCreator.generate(this.parser.namespaceSeparator), [])
         ];
 
         for(let i = 0; i < this.ast.length; i++)
