@@ -13,6 +13,7 @@ import VectorTransformer from './vector-transformer';
 import StrictSizeTransformer from './strict-size-transformer';
 import OptionalTransformer from './optional-transformer';
 import ContainerClassCreator from './container-class-creator';
+import TypedArrayTransformer from './typed-array-transformer';
 import * as fs from 'fs';
 
 const babel = require('@babel/core');
@@ -49,6 +50,7 @@ export default class CodeGenerator {
         this.templateTransformers.set('Vector', new VectorTransformer(this));
         this.templateTransformers.set('Optional', new OptionalTransformer(this));
         this.templateTransformers.set('StrictSize', new StrictSizeTransformer(this));
+        this.templateTransformers.set('TypedArray', new TypedArrayTransformer(this));
 
         this.interpreters = {
             containerGroup: new ContainerGroupInterpreter(this),
@@ -58,7 +60,12 @@ export default class CodeGenerator {
         this.containerClassCreator = new ContainerClassCreator(this);
     }
 
-    public getContainers() {
+    public getContainers(type?: string) {
+        if(type != undefined) {
+            return this.containers.filter(container => {
+                return container.type == this.path.concat([type]).join(this.parser.options.namespaceSeparator);
+            });
+        }
         return this.containers;
     }
 
@@ -94,7 +101,7 @@ export default class CodeGenerator {
     generate(): t.Program {
         const body: t.Statement[] = [
             ...this.getFileAst('templates/constructors-container.ts'),
-            t.exportNamedDeclaration(this.containerClassCreator.generate(this.parser.namespaceSeparator), [])
+            ...this.containerClassCreator.generate(this.parser.namespaceSeparator)
         ];
 
         for(let i = 0; i < this.ast.length; i++)

@@ -6,10 +6,12 @@ import * as crc from 'cyclic-rc';
 import VectorProcessor from './vector-processor';
 import OptionalProcessor from './optional-processor';
 import TemplateProcessor from './template-processor';
-import { Syntax, Generics, Container, ContainerParam } from './constants';
+import TypedArrayProcessor from './typed-array-processor';
+import { Syntax, Container, ContainerParam } from './constants';
 import { Params, Param } from './param';
 import ASTPreprocessor from './ast-preprocessor';
 import StrictSizeProcessor from './strict-size-processor';
+import { isGeneric } from './utils';
 
 export interface ASTParserOptions {
     path?: string[];
@@ -56,6 +58,7 @@ class ASTParser {
 
         this.templateProcessors.set('Vector', new VectorProcessor(this));
         this.templateProcessors.set('Optional', new OptionalProcessor(this));
+        this.templateProcessors.set('TypedArray', new TypedArrayProcessor(this));
         this.templateProcessors.set('StrictSize', new StrictSizeProcessor(this));
     }
 
@@ -65,31 +68,12 @@ class ASTParser {
         }
     }
 
-    isGeneric(type: string) {
-        switch(type) {
-            case Generics.String:
-            case Generics.Float:
-            case Generics.Double:
-            case Generics.Int8:
-            case Generics.UInt8:
-            case Generics.Boolean:
-            case Generics.Int32:
-            case Generics.Int64:
-            case Generics.Int16:
-            case Generics.UInt16:
-            case Generics.UInt32:
-            case Generics.UInt64:
-                return true;
-        }
-        return false;
-    }
-
     parseParamType(paramType: Node): Param {
         switch(paramType.type) {
             case Syntax.Identifier: {
                 const type = paramType.value;
 
-                if(this.isGeneric(type)) {
+                if(isGeneric(type)) {
                     return {
                         type: Params.Generic,
                         name: type
