@@ -37,6 +37,10 @@ export default class ContainerClassCreator {
         return this.slicesToTsQualifiedName(container.type.split(separator));
     }
 
+    getTsQualifiedContainerName(container: Container, separator: string) {
+        return this.slicesToTsQualifiedName(container.name.split(separator));
+    }
+
     generate(separator: string): t.Declaration[] {
         const containerNameProperty = t.classProperty(t.identifier('__container_name'), null);
         containerNameProperty.typeAnnotation = t.tsTypeAnnotation(t.tsStringKeyword());
@@ -50,10 +54,7 @@ export default class ContainerClassCreator {
 
         for(let i = 0; i < containers.length; i++) {
             const container = containers[i];
-            const slices = container.name.split(separator);
-            const reference = t.tsTypeReference(
-                this.slicesToTsQualifiedName(slices)
-            );
+            const reference = t.tsTypeReference(this.getTsQualifiedContainerName(container, separator));
 
             // TODO: check why babel types ignore the fact that body can be null
             body.push(<any>{
