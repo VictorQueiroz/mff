@@ -22,9 +22,11 @@ export default class Serializer {
     checkLength(byteLength: number) {
         if((this.offset + byteLength) >= this.length) {
             const oldView = this.view;
+            const length = this.length + byteLength + (2048 * 4);
 
-            this.buffer = new ArrayBuffer(this.length + byteLength + (2048 * 4));
-            this.view = Buffer.from(oldView);
+            this.buffer = new ArrayBuffer(length);
+            this.length = length;
+            this.view = Buffer.from(this.buffer);
             this.view.set(oldView);
         }
     }
