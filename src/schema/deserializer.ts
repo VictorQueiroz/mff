@@ -5,7 +5,7 @@ export default class Deserializer {
 
     constructor(buffer: ArrayBuffer, byteOffset: number = 0, length: number = buffer.byteLength) {
         this.buffer = buffer;
-        this.view = Buffer.from(this.buffer, byteOffset, length - byteOffset);
+        this.view = Buffer.from(this.buffer, byteOffset, length);
     }
 
     readUInt8() {
