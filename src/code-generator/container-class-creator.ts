@@ -99,6 +99,8 @@ export default class ContainerClassCreator {
 
         const declaration = t.classDeclaration(t.identifier('Container'), null, t.classBody(body));
 
-        return declaration;
+        return [
+            t.exportNamedDeclaration(declaration, [])
+        ];
     }
 }
