@@ -1,5 +1,6 @@
 import * as t from '@babel/types';
 import CodeGenerator from './index';
+import { Container } from '../ast-parser/constants';
 
 export interface ReferenciesList {
     [s: string]: t.TSTypeReference[]
@@ -32,7 +33,11 @@ export default class ContainerClassCreator {
         return result;
     }
 
-    generate(separator: string) {
+    getTsQualifiedContainerType(container: Container, separator: string) {
+        return this.slicesToTsQualifiedName(container.type.split(separator));
+    }
+
+    generate(separator: string): t.Declaration[] {
         const containerNameProperty = t.classProperty(t.identifier('__container_name'), null);
         containerNameProperty.typeAnnotation = t.tsTypeAnnotation(t.tsStringKeyword());
         containerNameProperty.accessibility = 'private';
@@ -62,7 +67,7 @@ export default class ContainerClassCreator {
 
         for(let i = 0; i < containers.length; i++) {
             const container = containers[i];
-            const reference = t.tsTypeReference(this.slicesToTsQualifiedName(container.type.split(separator)));
+            const reference = t.tsTypeReference(this.getTsQualifiedContainerType(container, separator));
 
             // TODO: check why babel types ignore the fact that body can be null
             body.push(<any>{
