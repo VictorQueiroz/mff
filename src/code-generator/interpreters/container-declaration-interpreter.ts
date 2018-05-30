@@ -143,12 +143,10 @@ export default class ContainerDeclarationInterpreter extends Interpreter<NodeCon
                     type = t.tsBooleanKeyword();
                     break;
                 default:
-                    type = t.tsTypeReference(t.identifier(paramType.value));
+                    type = this.processContainerReference(paramType);
             }
         } else if(paramType.type == Syntax.MemberExpression) {
-            type = t.tsTypeReference(
-                this.processMemberExpression(paramType)
-            );
+            type = this.processContainerReference(paramType);
         } else if(paramType.type == Syntax.Template) {
             type = this.processTemplate(paramType, property);
         } else {
@@ -172,12 +170,31 @@ export default class ContainerDeclarationInterpreter extends Interpreter<NodeCon
         return property;
     }
 
-    processMemberExpression(expr: NodeIdentifier | NodeMemberExpression): t.TSQualifiedName | t.Identifier {
-        switch(expr.type) {
-            case Syntax.MemberExpression:
-                return t.tsQualifiedName(this.processMemberExpression(expr.left), t.identifier(expr.right));
-            case Syntax.Identifier:
-                return t.identifier(expr.value);
+    /**
+     * Process a reference that could point both direct 
+     * and indirect to a container
+     */
+    processContainerReference(expr: NodeIdentifier | NodeMemberExpression): t.TSTypeReference {
+        let type: t.TSQualifiedName | t.Identifier;
+        if(expr.type == Syntax.MemberExpression) {
+            type = this.processMemberExpression(expr);
+        } else {
+            type = t.identifier(expr.value);
         }
+        return t.tsTypeReference(type);
+    }
+
+    /**
+     * Convert member expression to `t.TSQualifiedName`
+     */
+    processMemberExpression(expr: NodeMemberExpression): t.TSQualifiedName {
+        let left: t.Identifier | t.TSQualifiedName;
+
+        if(expr.left.type == Syntax.Identifier)
+            left = t.identifier(expr.left.value);
+        else
+            left = this.processMemberExpression(expr.left);
+
+        return t.tsQualifiedName(left, t.identifier(expr.right));
     }
 }
