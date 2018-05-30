@@ -81,6 +81,27 @@ export default function() {
                 }],
                 posts: []
             }]);
+        },
+
+        'it should perform encode and decode of various containers': function() {
+            const schema = new Schema(astParser.containers);
+
+            for(let i = 0; i < 10000; i++) {
+                const buffer = schema.encode(['geo.data.address', {
+                    streetName: 'Av. 2002',
+                    streetNumber: 2000 + i,
+                    url: ['geo.URL', {
+                        href: 'url 1'
+                    }]
+                }]);
+                assert.deepEqual(schema.decode(buffer), ['geo.data.address', {
+                    streetName: 'Av. 2002',
+                    streetNumber: 2000 + i,
+                    url: ['geo.URL', {
+                        href: 'url 1'
+                    }]
+                }]);
+            }
         }
     };
 }
