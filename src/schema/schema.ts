@@ -206,9 +206,14 @@ class Schema {
         }
     }
 
-    encode(object: any) {
-        const name = this.getContainerName(object);
-        const props = this.getContainerParams(object);
+    public encode(name: any, props?: undefined): Buffer;
+    public encode(name: string, props: any): Buffer;
+    public encode(name: string | any, props?: any): Buffer {
+        if(typeof name == 'object') {
+            props = this.getContainerParams(name);
+            name = this.getContainerName(name);
+        }
+
         const container = this.containers.get(name);
 
         if(!container)
