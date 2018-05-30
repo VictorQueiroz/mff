@@ -7,7 +7,7 @@ export interface NodeIdentifier {
 
 export interface NodeMemberExpression {
     type: Syntax.MemberExpression;
-    left: NodeMemberExpression;
+    left: NodeIdentifier | NodeMemberExpression;
     right: string;
 }
 
