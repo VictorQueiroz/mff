@@ -1,6 +1,6 @@
 import { Generics } from './constants';
 
-export function isGeneric(type: string) {
+export function isGeneric(type: string): type is Generics {
     switch(type) {
         case Generics.String:
         case Generics.Float:
