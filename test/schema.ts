@@ -3,6 +3,7 @@ import Schema from '../src/schema';
 import * as assert from 'assert';
 import * as crypto from 'crypto';
 import btc from '../src/btc';
+import { Generics } from '../src/ast-parser/constants';
 
 const astParser = new ASTParser(btc.parse(`
     import "schema.txt";
@@ -101,6 +102,45 @@ export default function() {
                         href: 'url 1'
                     }]
                 }]);
+            }
+
+        'getGenericDefault(): it should find defaults for generic types': function() {
+            const values = [{
+                type: Generics.Double,
+                value: 0,
+            }, {
+                type: Generics.Float,
+                value: 0
+            }, {
+                type: Generics.Int16,
+                value: 0
+            }, {
+                type: Generics.UInt16,
+                value: 0
+            }, {
+                type: Generics.UInt8,
+                value: 0
+            }, {
+                type: Generics.Int8,
+                value: 0
+            }, {
+                type: Generics.Int32,
+                value: 0
+            }, {
+                type: Generics.UInt32,
+                value: 0
+            }, {
+                type: Generics.String,
+                value: ''
+            }, {
+                type: Generics.Boolean,
+                value: false
+            }];
+
+            const schema = new Schema([]);
+
+            for(let i = 0; i < values.length; i++) {
+                assert.equal(schema.getGenericDefault('', values[i].type), values[i].value);
             }
         }
     };
