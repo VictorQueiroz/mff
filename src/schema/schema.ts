@@ -192,9 +192,35 @@ class Schema {
         processor.encode(param.arguments, value);
     }
 
+    /**
+     * Return default value for generics
+     */
+    getGenericDefault(name: string, value: Generics): any {
+        switch(value) {
+            case Generics.Double:
+            case Generics.Float:
+            case Generics.Int16:
+            case Generics.UInt16:
+            case Generics.UInt8:
+            case Generics.Int8:
+            case Generics.Int32:
+            case Generics.UInt32:
+                return 0;
+            case Generics.String:
+                return '';
+            case Generics.Boolean:
+                return false;
+        }
+
+        throw new Error(`Could not find default value for generic param of property "${name}"`);
+    }
+
     encodeContainerParam(param: Param, value: any) {
         switch(param.type) {
             case Params.Generic:
+                if(value == undefined) {
+                    value = this.getGenericDefault(param.name, value);
+                }
                 this.encodeGeneric(param.name, value);
                 break;
             case Params.Reference:
