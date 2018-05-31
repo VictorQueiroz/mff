@@ -1,10 +1,17 @@
 import * as t from '@babel/types';
 import { Syntax } from '../../ast-parser/constants';
-import { NodeContainerGroup } from '../../ast-parser/node';
+import {
+    NodeContainerGroup,
+    NodeContainerDeclaration
+} from '../../ast-parser/node';
 import Interpreter from './interpreter';
 
 export default class ContainerGroupInterpreter extends Interpreter {
     getAliasDeclarationName(node: NodeContainerGroup): t.Identifier {
+        return t.identifier(node.name);
+    }
+
+    getContainerClassName(node: NodeContainerDeclaration): t.Identifier {
         return t.identifier(node.name);
     }
 
@@ -18,7 +25,7 @@ export default class ContainerGroupInterpreter extends Interpreter {
             if(item.type != Syntax.ContainerDeclaration)
                 continue;
 
-            tsTypes.push(t.tsTypeReference(t.identifier(item.name)));
+            tsTypes.push(t.tsTypeReference(this.getContainerClassName(item)));
         }
 
         const typeAliasDeclaration = t.tsTypeAliasDeclaration(this.getAliasDeclarationName(node), null, t.tsUnionType(tsTypes));

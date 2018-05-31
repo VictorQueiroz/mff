@@ -49,6 +49,7 @@ export default class ContainerDeclarationInterpreter extends Interpreter<NodeCon
 
         this.createContainerMethods(node, classBody);
 
+        const classDeclarationIdentifier = this.getClassDeclarationName(node);
         const paramsInterface = t.tsInterfaceDeclaration(t.identifier(`${node.name}Params`), null, null, t.tsInterfaceBody(body));
         const classDeclaration = t.classDeclaration(this.getClassDeclarationName(node), t.identifier('Container'), t.classBody(classBody));
         const container = this.generator.getContainer(node.name);
@@ -61,7 +62,7 @@ export default class ContainerDeclarationInterpreter extends Interpreter<NodeCon
             t.exportNamedDeclaration(classDeclaration, []),
             t.expressionStatement(t.callExpression(
                 t.memberExpression(t.identifier('schema'), t.identifier('registerContainerExistence')),
-                [t.stringLiteral(container.name), t.numericLiteral(container.id), t.identifier(node.name)]
+                [t.stringLiteral(container.name), t.numericLiteral(container.id), classDeclarationIdentifier]
             ))
         ];
     }
