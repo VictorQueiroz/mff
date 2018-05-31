@@ -52,6 +52,9 @@ export default function() {
                 }
                 namespace filter {
                     namespace schedule {
+                        type FilterSchedules {
+                            filterSchedules -> TimeIntervalDirect interval
+                        }
                         type SchedulesFilter {
                             schedulesFilter -> TimeInterval time
                         }
@@ -62,12 +65,28 @@ export default function() {
                     type TimeInterval {
                         timeInterval
                     }
+                    type TimeIntervalDirect {
+                        timeIntervalDirect -> timeInterval time
+                    }
                 }
             `), [{
                 id: 2192991637,
                 type: 'TimeInterval',
                 params: [],
                 name: 'timeInterval'
+            }, {
+                id: 1481655917,
+                type: 'filter::schedule::FilterSchedules',
+                name: 'filter::schedule::filterSchedules',
+                params: [{
+                    name: 'interval',
+                    type: {
+                        type: Params.Reference,
+                        containers: [
+                            'filter::schedule::timeIntervalDirect'
+                        ]
+                    }
+                }]
             }, {
                 id: 4005121723,
                 type: 'filter::schedule::SchedulesFilter',
@@ -95,6 +114,17 @@ export default function() {
                 type: 'filter::TimeInterval',
                 name: 'filter::timeInterval',
                 params: []
+            }, {
+                id: 2892414978,
+                type: 'filter::TimeIntervalDirect',
+                name: 'filter::timeIntervalDirect',
+                params: [{
+                    name: 'time',
+                    type: {
+                        type: Params.Reference,
+                        containers: ['filter::timeInterval']
+                    }
+                }]
             }]);
         }
     };

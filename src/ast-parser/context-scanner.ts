@@ -21,25 +21,24 @@ class ContextScanner {
      */
     parser: Parser;
 
+
     constructor(parser: Parser) {
         this.parser = parser;
     }
 
     match(expressionPath: string[]) {
-        const path = this.parser.path;
         let result: string[][];
-        let ii = path.length - 1;
+        const path = this.parser.path;
 
-        for(let i = ii; i >= 0; i--) {
-            result = [path.slice(i), path.slice(0, i)].reduce((result: string[][], path: string[]) => {
-                if(result.length > 0)
+        if(path.length > 0) {
+            const ii = path.length;
+
+            for(let i = ii; i >= 0; i--) {
+                result = this._match(path.slice(0, i).concat(expressionPath));
+
+                if(result.length)
                     return result;
-
-                return this._match(path.concat(expressionPath));
-            }, []);
-
-            if(result.length)
-                return result;
+            }
         }
 
         return this._match(expressionPath);
