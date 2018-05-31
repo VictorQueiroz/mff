@@ -15,7 +15,7 @@
     "typescript": "^3.0.0-dev.20180522"
   },
   "name": "message-ff",
-  "version": "1.1.2",
+  "version": "1.4.5",
   "keywords": [
     "binary",
     "language"
