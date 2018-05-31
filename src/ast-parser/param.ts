@@ -1,3 +1,5 @@
+import { Generics } from './constants';
+
 export enum Params {
     Generic = 'Generic',
     Reference = 'Reference',
@@ -21,7 +23,7 @@ export interface ParamReference {
 
 export interface ParamGeneric {
     type: Params.Generic;
-    name: string;
+    name: Generics;
 }
 
 export type Param = ParamTemplate | ParamReference | ParamGeneric;
