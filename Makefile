@@ -9,6 +9,7 @@ test:
 	./node_modules/.bin/sarg \
 	--require=ts-node/register \
 	--bail \
+	--ignore "test/utilities.ts" \
 	-r test
 
 .PHONY: test release docs
