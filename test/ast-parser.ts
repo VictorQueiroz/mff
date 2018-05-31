@@ -1,20 +1,6 @@
-import ASTParser from '../src/ast-parser';
-import { Container } from '../src/ast-parser/constants';
 import { Params } from '../src/ast-parser/param';
 import * as assert from 'assert';
-import btc from '../src/btc';
-
-function parse(text: string, options: any = {}) {
-    const containers: Container[] = [];
-
-    new ASTParser(btc.parse(text), {
-        ...options,
-        directory: '',
-        containers
-    }).parse();
-
-    return containers;
-}
+import { parse } from './utilities';
 
 export default function() {
     return {
