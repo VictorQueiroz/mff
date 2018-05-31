@@ -142,6 +142,13 @@ export default function() {
             for(let i = 0; i < values.length; i++) {
                 assert.equal(schema.getGenericDefault('', values[i].type), values[i].value);
             }
+        },
+
+        'it should not encode null properties for optional fields': () => {
+            const schema = new Schema(parse(`type User {
+                user -> Optional<string> name
+            }`));
+            assert.deepStrictEqual(schema.decode(schema.encode(['user', { name: null }])), ['user', {}]);
         }
     };
 }

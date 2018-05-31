@@ -7,7 +7,7 @@ export default class OptionalProcessor extends TemplateProcessor<Param> {
     encode(args: Param[], value: any) {
         const serializer = this.schema.serializer;
 
-        if(typeof value != 'undefined') {
+        if(value != undefined && value != null) {
             serializer.writeBoolean(true);
             this.schema.encodeContainerParam(args[0], value);
             return;
