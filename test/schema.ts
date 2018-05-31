@@ -1,24 +1,20 @@
-import ASTParser from '../src/ast-parser';
 import Schema from '../src/schema';
 import * as assert from 'assert';
 import * as crypto from 'crypto';
-import btc from '../src/btc';
+import { parse } from './utilities';
 import { Generics } from '../src/ast-parser/constants';
 
-const astParser = new ASTParser(btc.parse(`
+const containers = parse(`
     import "schema.txt";
-`), {
+`, {
     directory: __dirname,
-    containers: [],
     namespaceSeparator: '.'
 });
-
-astParser.parse();
 
 export default function() {
     return {
         'it should encode complex containers': function() {
-            const buffer = new Schema(astParser.containers).encode(['user', {
+            const buffer = new Schema(containers).encode(['user', {
                 name: 'simple user',
                 age: 10,
                 address: ['geo.data.address', {
@@ -35,7 +31,7 @@ export default function() {
                 ]
             }]);
 
-            assert.deepEqual(new Schema(astParser.containers).decode(buffer), ['user', {
+            assert.deepEqual(new Schema(containers).decode(buffer), ['user', {
                 name: 'simple user',
                 age: 10,
                 address: ['geo.data.address', {
@@ -55,7 +51,7 @@ export default function() {
 
         'it should perform validation when optional fields receive value': function() {
             const id = crypto.randomBytes(12);
-            const buffer = new Schema(astParser.containers).encode(['user', {
+            const buffer = new Schema(containers).encode(['user', {
                 id,
                 name: 'simple user',
                 age: 10,
@@ -69,7 +65,7 @@ export default function() {
                 posts: []
             }]);
 
-            assert.deepEqual(new Schema(astParser.containers).decode(buffer), ['user', {
+            assert.deepEqual(new Schema(containers).decode(buffer), ['user', {
                 id,
                 name: 'simple user',
                 age: 10,
@@ -85,7 +81,7 @@ export default function() {
         },
 
         'it should perform encode and decode of various containers': function() {
-            const schema = new Schema(astParser.containers);
+            const schema = new Schema(containers);
 
             for(let i = 0; i < 10000; i++) {
                 const buffer = schema.encode(['geo.data.address', {
