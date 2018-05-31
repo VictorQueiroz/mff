@@ -99,6 +99,37 @@ export default function() {
                     }]
                 }]);
             }
+        },
+
+        'it should deal well with slices of current array buffer': function() {
+            const schema = new Schema(containers);
+            const msg = schema.encode(['geo.data.address', {
+                streetName: 'Av. 2002',
+                streetNumber: 2000,
+                url: ['geo.URL', {
+                    href: 'url 1'
+                }]
+            }]);
+            assert.deepEqual(schema.decode(msg), ['geo.data.address', {
+                streetName: 'Av. 2002',
+                streetNumber: 2000,
+                url: ['geo.URL', {
+                    href: 'url 1'
+                }]
+            }]);
+            const encoded = schema.encode(['msg', {
+                body: msg
+            }]);
+            const decoded = schema.decode(encoded);
+            assert.ok(decoded[1].body.equals(msg));
+            assert.deepEqual(schema.decode(decoded[1].body), ['geo.data.address', {
+                streetName: 'Av. 2002',
+                streetNumber: 2000,
+                url: ['geo.URL', {
+                    href: 'url 1'
+                }]
+            }]);
+        },
 
         'getGenericDefault(): it should find defaults for generic types': function() {
             const values = [{
@@ -136,8 +167,18 @@ export default function() {
             const schema = new Schema([]);
 
             for(let i = 0; i < values.length; i++) {
-                assert.equal(schema.getGenericDefault('', values[i].type), values[i].value);
+                assert.equal(schema.getGenericDefault(values[i].type), values[i].value);
             }
+        },
+
+        'it should not encode property when optional is not defined': function() {
+            const schema = new Schema(parse(`
+                type User {
+                    user -> Optional<string> name
+                }
+            `));
+
+            assert.deepStrictEqual(schema.decode(schema.encode(['user', {}])), ['user', {}]);
         },
 
         'it should not encode null properties for optional fields': () => {
