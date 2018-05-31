@@ -31,7 +31,7 @@ class ContextScanner {
         let ii = path.length - 1;
 
         for(let i = ii; i >= 0; i--) {
-            result = [path.slice(0, i), path.slice(i)].reduce((result: string[][], path: string[]) => {
+            result = [path.slice(i), path.slice(0, i)].reduce((result: string[][], path: string[]) => {
                 if(result.length > 0)
                     return result;
 

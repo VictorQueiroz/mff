@@ -57,6 +57,59 @@ export default function() {
                     }
                 }]
             }]);
+        },
+
+        'it should prioritize local containers': function() {
+            assert.deepEqual(parse(`
+                type TimeInterval {
+                    timeInterval
+                }
+                namespace filter {
+                    namespace schedule {
+                        type SchedulesFilter {
+                            schedulesFilter -> TimeInterval time
+                        }
+                        type TimeIntervalDirect {
+                            timeIntervalDirect -> timeInterval time
+                        }
+                    }
+                    type TimeInterval {
+                        timeInterval
+                    }
+                }
+            `), [{
+                id: 2192991637,
+                type: 'TimeInterval',
+                params: [],
+                name: 'timeInterval'
+            }, {
+                id: 4005121723,
+                type: 'filter::schedule::SchedulesFilter',
+                name: 'filter::schedule::schedulesFilter',
+                params: [{
+                    name: 'time',
+                    type: {
+                        type: Params.Reference,
+                        containers: ['filter::timeInterval']
+                    }
+                }]
+            }, {
+                id: 2924657150,
+                type: 'filter::schedule::TimeIntervalDirect',
+                name: 'filter::schedule::timeIntervalDirect',
+                params: [{
+                    name: 'time',
+                    type: {
+                        type: Params.Reference,
+                        containers: ['filter::timeInterval']
+                    }
+                }]
+            }, {
+                id: 3176971329,
+                type: 'filter::TimeInterval',
+                name: 'filter::timeInterval',
+                params: []
+            }]);
         }
     };
 };
