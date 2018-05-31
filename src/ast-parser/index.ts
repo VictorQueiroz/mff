@@ -7,7 +7,11 @@ import VectorProcessor from './vector-processor';
 import OptionalProcessor from './optional-processor';
 import TemplateProcessor from './template-processor';
 import TypedArrayProcessor from './typed-array-processor';
-import { Syntax, Container, ContainerParam } from './constants';
+import {
+    Syntax,
+    Container,
+    ContainerParam
+} from './constants';
 import { Params, Param } from './param';
 import ASTPreprocessor from './ast-preprocessor';
 import StrictSizeProcessor from './strict-size-processor';
