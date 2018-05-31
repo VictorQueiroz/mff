@@ -1,15 +1,14 @@
 import TemplateProcessor from './template-processor';
 import { PropertyType } from './template-processor';
 import Deserializer from './deserializer';
+import Serializer from './serializer';
 import { Param } from '../ast-parser/param';
 
 export default class OptionalProcessor extends TemplateProcessor<Param> {
-    encode(args: Param[], value: any) {
-        const serializer = this.schema.serializer;
-
+    encode(serializer: Serializer, args: Param[], value: any) {
         if(value != undefined && value != null) {
             serializer.writeBoolean(true);
-            this.schema.encodeContainerParam(args[0], value);
+            this.schema.encodeContainerParam(serializer, args[0], value);
             return;
         }
 

@@ -1,44 +1,24 @@
 export default class Serializer {
-    private buffer: ArrayBuffer;
-    private length: number;
-    private offset: number;
-    private view: Buffer;
+    private buffers: Buffer[];
 
     constructor() {
-        this.length = 2048 * 4;
-        this.buffer = new ArrayBuffer(this.length);
-        this.view = Buffer.from(this.buffer, 0);
-        this.offset = 0;
-    }
-
-    public getOffset() {
-        return this.offset;
+        this.buffers = [];
     }
 
     public getBuffer() {
-        return this.buffer;
+        return Buffer.concat(this.buffers);
     }
 
-    checkLength(byteLength: number) {
-        if((this.offset + byteLength) >= this.length) {
-            const oldView = this.view;
-            const length = this.length + byteLength + (2048 * 4);
-
-            this.buffer = new ArrayBuffer(length);
-            this.length = length;
-            this.view = Buffer.from(this.buffer);
-            this.view.set(oldView);
-        }
-    }
-
-    writeBuffer(buffer: Buffer) {
-        if(!Buffer.isBuffer(buffer))
+    writeBuffer(source: Buffer) {
+        if(!Buffer.isBuffer(source))
             throw new Error('Argument must be a buffer instance');
 
-        const length = buffer.byteLength;
+        const length = source.byteLength;
+        const result = Buffer.allocUnsafe(length);
 
-        this.checkLength(length);
-        this.offset += buffer.copy(this.view, this.offset, 0, length);
+        source.copy(result, 0, 0, length);
+
+        this.buffers.push(result);
     }
 
     writeBoolean(n: boolean) {
@@ -48,43 +28,51 @@ export default class Serializer {
     }
 
     writeInt8(n: number) {
-        this.checkLength(1);
-        this.offset = this.view.writeInt8(n, this.offset);
+        const buffer = Buffer.allocUnsafe(1);
+        buffer.writeInt8(n, 0);
+        this.buffers.push(buffer);
     }
 
     writeUInt8(n: number) {
-        this.checkLength(1);
-        this.offset = this.view.writeUInt8(n, this.offset);
+        const buffer = Buffer.allocUnsafe(1);
+        buffer.writeUInt8(n, 0);
+        this.buffers.push(buffer);
     }
 
     writeUInt16(n: number) {
-        this.checkLength(2);
-        this.offset = this.view.writeUInt16LE(n, this.offset);
+        const buffer = Buffer.allocUnsafe(2);
+        buffer.writeUInt16LE(n, 0);
+        this.buffers.push(buffer);
     }
 
     writeInt16(n: number) {
-        this.checkLength(2);
-        this.offset = this.view.writeInt16LE(n, this.offset);
+        const buffer = Buffer.allocUnsafe(2);
+        buffer.writeInt16LE(n, 0);
+        this.buffers.push(buffer);
     }
 
     writeUInt32(n: number) {
-        this.checkLength(4);
-        this.offset = this.view.writeUInt32LE(n, this.offset);
+        const buffer = Buffer.allocUnsafe(4);
+        buffer.writeUInt32LE(n, 0);
+        this.buffers.push(buffer);
     }
 
     writeInt32(n: number) {
-        this.checkLength(4);
-        this.offset = this.view.writeInt32LE(n, this.offset);
+        const buffer = Buffer.allocUnsafe(4);
+        buffer.writeInt32LE(n, 0);
+        this.buffers.push(buffer);
     }
 
     writeDouble(n: number) {
-        this.checkLength(8);
-        this.offset = this.view.writeDoubleLE(n, this.offset);
+        const buffer = Buffer.allocUnsafe(8);
+        buffer.writeDoubleLE(n, 0);
+        this.buffers.push(buffer);
     }
 
     writeFloat(n: number) {
-        this.checkLength(4);
-        this.offset = this.view.writeFloatLE(n, this.offset);
+        const buffer = Buffer.allocUnsafe(4);
+        buffer.writeFloatLE(n, 0);
+        this.buffers.push(buffer);
     }
 
     writeString(n: string) {

@@ -1,43 +1,42 @@
 export default class Deserializer {
-    view: Buffer;
     offset: number = 0;
-    buffer: ArrayBuffer;
+    buffer: Buffer;
 
-    constructor(buffer: ArrayBuffer, byteOffset: number = 0, length: number = buffer.byteLength) {
+    constructor(buffer: Buffer, offset: number = 0) {
         this.buffer = buffer;
-        this.view = Buffer.from(this.buffer, byteOffset, length);
+        this.offset = offset;
     }
 
     readUInt8() {
-        const value = this.view.readUInt8(this.offset);
+        const value = this.buffer.readUInt8(this.offset);
         this.offset += 1;
 
         return value;
     }
 
     readInt8() {
-        const value = this.view.readInt8(this.offset);
+        const value = this.buffer.readInt8(this.offset);
         this.offset += 1;
 
         return value;
     }
 
     readFloat() {
-        const value = this.view.readFloatLE(this.offset);
+        const value = this.buffer.readFloatLE(this.offset);
         this.offset += 4;
 
         return value;
     }
 
     readDouble() {
-        const value = this.view.readDoubleLE(this.offset);
-        this.offset += 4;
+        const value = this.buffer.readDoubleLE(this.offset);
+        this.offset += 8;
 
         return value;
     }
 
     readBuffer(length: number) {
-        const result = Buffer.from(this.buffer, this.offset, length);
+        const result = this.buffer.slice(this.offset, this.offset + length);
         this.offset += length;
 
         return result;
@@ -55,28 +54,28 @@ export default class Deserializer {
     }
 
     readUInt32() {
-        const result = this.view.readUInt32LE(this.offset);
+        const result = this.buffer.readUInt32LE(this.offset);
         this.offset += 4;
 
         return result;
     }
 
     readInt32() {
-        const result = this.view.readInt32LE(this.offset);
+        const result = this.buffer.readInt32LE(this.offset);
         this.offset += 4;
 
         return result;
     }
 
     readInt16() {
-        const result = this.view.readInt16LE(this.offset);
+        const result = this.buffer.readInt16LE(this.offset);
         this.offset += 2;
 
         return result;
     }
 
     readUInt16() {
-        const result = this.view.readUInt16LE(this.offset);
+        const result = this.buffer.readUInt16LE(this.offset);
         this.offset += 2;
 
         return result;

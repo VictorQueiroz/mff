@@ -2,6 +2,7 @@ import TemplateProcessor from './template-processor';
 import { PropertyType } from './template-processor';
 import Deserializer from './deserializer';
 import { Param } from '../ast-parser/param';
+import Serializer from './serializer';
 
 export default class VectorProcessor extends TemplateProcessor<Param> {
     decode(deserializer: Deserializer, args: Param[], result: any, prop: PropertyType) {
@@ -15,8 +16,7 @@ export default class VectorProcessor extends TemplateProcessor<Param> {
         result[prop] = array;
     }
 
-    encode(args: Param[], input: any) {
-        const serializer = this.schema.serializer;
+    encode(serializer: Serializer, args: Param[], input: any) {
         const arrayOf = args[0];
 
         if(!Array.isArray(input))
@@ -26,6 +26,6 @@ export default class VectorProcessor extends TemplateProcessor<Param> {
         serializer.writeUInt32(ii);
 
         for(let i = 0; i < ii; i++)
-            this.schema.encodeContainerParam(arrayOf, input[i]);
+            this.schema.encodeContainerParam(serializer, arrayOf, input[i]);
     }
 }

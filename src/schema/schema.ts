@@ -14,7 +14,6 @@ export interface SchemaOptions {
 }
 
 class Schema {
-    serializer: Serializer;
     containers: Map<string, Container> = new Map();
     containersCRC: Map<number, Container> = new Map();
     templateProcessors: Map<string, TemplateProcessor> = new Map();
@@ -25,7 +24,6 @@ class Schema {
             this.containersCRC.set(container.id, container);
         });
 
-        this.serializer = new Serializer;
         this.templateProcessors.set('StrictSize', new StrictSizeProcessor(this));
         this.templateProcessors.set('Vector', new VectorProcessor(this));
         this.templateProcessors.set('TypedArray', new TypedArrayProcessor(this));
@@ -72,9 +70,7 @@ class Schema {
         }
     }
 
-    encodeGeneric(type: string, value: any) {
-        const serializer = this.serializer;
-
+    encodeGeneric(serializer: Serializer, type: string, value: any) {
         switch(type) {
             case Generics.Double:
                 serializer.writeDouble(value);
@@ -127,15 +123,6 @@ class Schema {
         return [container.name, params];
     }
 
-    encodeReference(containers: string[], value: any) {
-        const name = this.getContainerName(value);
-
-        if(containers.indexOf(name) == -1)
-            throw new Error(`Expected ${containers.join(' or ')} but got ${name} instead`);
-
-        this.encode(value);
-    }
-
     decodeTemplate(deserializer: Deserializer, template: ParamTemplate, result: any, prop: PropertyType) {
         const processor = this.templateProcessors.get(template.name);
 
@@ -147,7 +134,7 @@ class Schema {
 
     decode(deserializer: Buffer | Deserializer): any {
         if(Buffer.isBuffer(deserializer)) {
-            return this.decode(new Deserializer(deserializer.buffer, deserializer.byteOffset, deserializer.byteLength));
+            return this.decode(new Deserializer(deserializer));
         }
 
         const id = deserializer.readUInt32();
@@ -183,19 +170,28 @@ class Schema {
         }
     }
 
-    encodeTemplate(param: ParamTemplate, value: any) {
+    encodeReference(serializer: Serializer, containers: string[], value: any) {
+        const name = this.getContainerName(value);
+
+        if(containers.indexOf(name) == -1)
+            throw new Error(`Expected ${containers.join(' or ')} but got ${name} instead`);
+
+        this.encode(value, serializer);
+    }
+
+    encodeTemplate(serializer: Serializer, param: ParamTemplate, value: any) {
         const processor = this.templateProcessors.get(param.name);
 
         if(!processor)
             throw new Error(`No template for encoding "${param.name}" template`);
 
-        processor.encode(param.arguments, value);
+        processor.encode(serializer, param.arguments, value);
     }
 
     /**
      * Return default value for generics
      */
-    getGenericDefault(name: string, value: Generics): any {
+    getGenericDefault(value: Generics): any {
         switch(value) {
             case Generics.Double:
             case Generics.Float:
@@ -212,33 +208,40 @@ class Schema {
                 return false;
         }
 
-        throw new Error(`Could not find default value for generic param of property "${name}"`);
+        throw new Error(`Could not find default value for generic param`);
     }
 
-    encodeContainerParam(param: Param, value: any) {
+    encodeContainerParam(serializer: Serializer, param: Param, value: any) {
         switch(param.type) {
             case Params.Generic:
                 if(value == undefined) {
-                    value = this.getGenericDefault(param.name, value);
+                    value = this.getGenericDefault(param.name);
                 }
-                this.encodeGeneric(param.name, value);
+                this.encodeGeneric(serializer, param.name, value);
                 break;
             case Params.Reference:
-                this.encodeReference(param.containers, value);
+                this.encodeReference(serializer, param.containers, value);
                 break;
             case Params.Template:
-                this.encodeTemplate(param, value);
+                this.encodeTemplate(serializer, param, value);
                 break;
         }
     }
 
-    public encode(name: any, props?: undefined): Buffer;
-    public encode(name: string, props: any): Buffer;
-    public encode(name: string | any, props?: any): Buffer {
+    public encode(name: any, props?: undefined | Serializer): Buffer;
+    public encode(name: string, props: any, serializer?: Serializer): Buffer;
+    public encode(name: string | any, props?: any, serializer?: Serializer): Buffer {
         if(typeof name == 'object') {
+            if(props instanceof Serializer) {
+                serializer = props;
+            }
+
             props = this.getContainerParams(name);
             name = this.getContainerName(name);
         }
+
+        if(!serializer)
+            serializer = new Serializer;
 
         const container = this.containers.get(name);
 
@@ -247,20 +250,16 @@ class Schema {
 
         const params = container.params;
         const ii = params.length;
-        const serializer = this.serializer;
-        const startOffset = serializer.getOffset();
 
         serializer.writeUInt32(container.id);
 
         for(let i = 0; i < ii; i++) {
             const param = params[i];
 
-            this.encodeContainerParam(param.type, props[param.name]);
+            this.encodeContainerParam(serializer, param.type, props[param.name]);
         }
 
-        const endOffset = serializer.getOffset();
-
-        return Buffer.from(serializer.getBuffer(), startOffset, endOffset - startOffset);
+        return serializer.getBuffer();
     }
 }
 

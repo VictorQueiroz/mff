@@ -3,6 +3,7 @@ import { PropertyType } from './template-processor';
 import Deserializer from './deserializer';
 import { Param, ParamGeneric, Params } from '../ast-parser/param';
 import { Generics } from '../ast-parser/constants';
+import Serializer from './serializer';
 
 const typedArrays = {
     Int8Array: '[object Int8Array]',
@@ -41,7 +42,7 @@ export default class TypedArrayProcessor extends TemplateProcessor<Param> {
         result[prop] = output;
     }
 
-    _encode(arrayOf: ParamGeneric, input: any) {
+    _encode(serializer: Serializer, arrayOf: ParamGeneric, input: any) {
         let valid: boolean = false;
         const safeName = Object.prototype.toString.call(input);
 
@@ -72,18 +73,17 @@ export default class TypedArrayProcessor extends TemplateProcessor<Param> {
             throw TypedArrayProcessor.errorUnexpectedValue;
 
         const length = input.byteLength;
-        const serializer = this.schema.serializer;
 
         serializer.writeUInt32(length);
         serializer.writeBuffer(Buffer.from(input));
     }
 
-    encode(args: Param[], input: any) {
+    encode(serializer: Serializer, args: Param[], input: any) {
         const arrayOf = args[0];
 
         if(arrayOf.type != Params.Generic)
             throw TypedArrayProcessor.errorNonGeneric;
 
-        this._encode(arrayOf, input);
+        this._encode(serializer, arrayOf, input);
     }
 }
