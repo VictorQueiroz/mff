@@ -7,6 +7,7 @@ import {
     NodeIdentifier,
     NodeMemberExpression
 } from '../../ast-parser/node';
+import { Params, Param } from '../../ast-parser/param';
 import * as t from '@babel/types';
 import { Generics, Syntax } from '../../ast-parser/constants';
 
@@ -65,6 +66,43 @@ export default class ContainerDeclarationInterpreter extends Interpreter<NodeCon
         ];
     }
 
+    /**
+     * It create correct assignment for class properties according to 
+     * param type
+     */
+    processParamForClassPropertyAssignment(name: string, _param: Param): t.Statement[] {
+        const left = t.memberExpression(
+            t.thisExpression(),
+            t.identifier(name)
+        );
+
+        const right = t.memberExpression(
+            t.identifier('params'),
+            t.identifier(name)
+        );
+
+        return [
+            t.expressionStatement(
+                t.assignmentExpression('=', left, right)
+            )
+        ];
+    }
+
+    createClassPropertyAssignment(name: string, param: Param): t.Statement[] {
+        switch(param.type) {
+            case Params.Generic:
+            case Params.Reference:
+                return this.processParamForClassPropertyAssignment(name, param);
+            case Params.Template: {
+                const transformer = this.generator.getTemplateTransformer(param.name);
+
+                return transformer.generateClassConstructorPropertyAssignmentForParam(name, param);
+            }
+        }
+
+        throw new Error(`Unexpected param type`);
+    }
+
     createContainerMethods(node: NodeContainerDeclaration, body: Array<t.ClassMethod | t.ClassProperty | t.ClassPrivateProperty | t.TSDeclareMethod | t.TSIndexSignature>) {
         const paramsLength = node.body.reduce((total, node) => {
             if(node.type == Syntax.ContainerParam)
@@ -81,28 +119,16 @@ export default class ContainerDeclarationInterpreter extends Interpreter<NodeCon
             });
         }
 
-        const paramsAssignment = node.body.reduce((body, param) => {
-            if(param.type != Syntax.ContainerParam)
-                return body;
-
-            const left = t.memberExpression(
-                t.thisExpression(),
-                t.identifier(param.name)
-            );
-
-            const right = t.memberExpression(
-                t.identifier('params'),
-                t.identifier(param.name)
-            );
-
-            return body.concat([t.expressionStatement(
-                t.assignmentExpression('=', left, right))]);
-        }, <t.Statement[]>[]);
-
         const container = this.generator.getContainer(node.name);
 
         if(!container)
             throw new Error(`Container not found`);
+
+        const paramsAssignment = container.params.reduce((body, param) => {
+            return body.concat(
+                this.createClassPropertyAssignment(param.name, param.type)
+            );
+        }, <t.Statement[]>[]);
 
         const containerConstructor = t.classMethod('constructor', t.identifier('constructor'), constructorParams, t.blockStatement([
             t.expressionStatement(t.callExpression((<any>t).super(), [
