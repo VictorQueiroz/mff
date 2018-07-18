@@ -11,9 +11,9 @@ const containers = parse(`
     namespaceSeparator: '.'
 });
 
-export default function() {
+export default () => {
     return {
-        'it should encode complex containers': function() {
+        'it should encode complex containers': () => {
             const buffer = new Schema(containers).encode(['user', {
                 name: 'simple user',
                 age: 10,
@@ -49,7 +49,7 @@ export default function() {
             }]);
         },
 
-        'it should perform validation when optional fields receive value': function() {
+        'it should perform validation when optional fields receive value': () => {
             const id = crypto.randomBytes(12);
             const buffer = new Schema(containers).encode(['user', {
                 id,
@@ -80,7 +80,7 @@ export default function() {
             }]);
         },
 
-        'it should perform encode and decode of various containers': function() {
+        'it should perform encode and decode of various containers': () => {
             const schema = new Schema(containers);
 
             for(let i = 0; i < 10000; i++) {
@@ -101,7 +101,7 @@ export default function() {
             }
         },
 
-        'it should deal well with slices of current array buffer': function() {
+        'it should deal well with slices of current array buffer': () => {
             const schema = new Schema(containers);
             const msg = schema.encode(['geo.data.address', {
                 streetName: 'Av. 2002',
@@ -131,7 +131,7 @@ export default function() {
             }]);
         },
 
-        'getGenericDefault(): it should find defaults for generic types': function() {
+        'getGenericDefault(): it should find defaults for generic types': () => {
             const values = [{
                 type: Generics.Double,
                 value: 0,
@@ -171,7 +171,7 @@ export default function() {
             }
         },
 
-        'it should not encode property when optional is not defined': function() {
+        'it should not encode property when optional is not defined': () => {
             const schema = new Schema(parse(`
                 type User {
                     user -> Optional<string> name
