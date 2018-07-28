@@ -1,6 +1,6 @@
 # message-ff
 
-Full implementation of a Message Format Framework, it'll help you format messages with its contents using an intuitive language for type definitions.
+Full implementation of a Message Formatting Framework, it'll help you format messages with its contents using an intuitive language for type definitions.
 
 This module implements an AST Parser written in JavaScript which uses a C api to generate an AST from the given text input. So the following code will be received by `ASTParser`, processed, parsed and then generated into containers.
 
