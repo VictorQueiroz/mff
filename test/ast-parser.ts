@@ -2,9 +2,9 @@ import { Params } from '../src/ast-parser/param';
 import * as assert from 'assert';
 import { parse } from './utilities';
 
-export default function() {
+export default () => {
     return {
-        'it should look for references inside namespaces': function() {
+        'it should look for references inside namespaces': () => {
             assert.deepEqual(parse(`
                 namespace api {
                     type TSetConfig {
@@ -45,7 +45,7 @@ export default function() {
             }]);
         },
 
-        'it should prioritize local containers': function() {
+        'it should prioritize local containers': () => {
             assert.deepEqual(parse(`
                 type TimeInterval {
                     timeInterval
