@@ -150,7 +150,7 @@ class Schema {
         for(let i = 0; i < ii; i++) {
             const param = params[i];
             const property = param.name;
-            
+
             this.decodeContainerParam(deserializer, param.type, props, property);
         }
 

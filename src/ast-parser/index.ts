@@ -99,7 +99,7 @@ class ASTParser {
 
                 if(!templateProcessor)
                     throw new Error(`Unexpected template variable "${paramType.name}"`);
-                
+
                 return {
                     type: Params.Template,
                     name: paramType.name,
