@@ -5,6 +5,8 @@
     ],
     "jsRules": {},
     "rules": {
+        "eofline": false,
+        "interface-name": false,
         "object-literal-sort-keys": false,
         "trailing-comma": false,
         "whitespace": false,
