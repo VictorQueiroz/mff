@@ -146,7 +146,8 @@ class ASTParser {
     createCrcString(ast: Node): string {
         switch(ast.type) {
             case Syntax.ContainerDeclaration:
-                return `${this.path.concat([ast.name]).join('.')} -> ${ast.body.map(node => this.createCrcString(node)).join(',')}`;
+                return `${this.path.concat([ast.name]).join('.')} -> ` +
+                        `${ast.body.map(node => this.createCrcString(node)).join(',')}`;
             case Syntax.ContainerParam:
                 return `${ast.name}:${this.createCrcString(ast.paramType)}`;
             case Syntax.Identifier:
