@@ -165,8 +165,8 @@ test('getGenericDefault(): it should find defaults for generic types', () => {
 
     const schema = new Schema([]);
 
-    for(let i = 0; i < values.length; i++) {
-        assert.equal(schema.getGenericDefault(values[i].type), values[i].value);
+    for(const value of values) {
+        assert.equal(schema.getGenericDefault(value.type), value.value);
     }
 });
 
