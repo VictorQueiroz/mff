@@ -69,8 +69,8 @@ class ASTParser {
     }
 
     parse() {
-        for(let i = 0; i < this.ast.length; i++) {
-            this.parseAstItem(this.ast[i]);
+        for(const item of this.ast) {
+            this.parseAstItem(item);
         }
     }
 
@@ -170,9 +170,7 @@ class ASTParser {
         switch(ast.type) {
             case Syntax.ContainerDeclaration: {
                 const params = [];
-                for(let i = 0; i < ast.body.length; i++) {
-                    const item = ast.body[i];
-
+                for(const item of ast.body) {
                     if(item.type == Syntax.ContainerParam) {
                         params.push(this.parseContainerParam(item));
                     }
@@ -196,11 +194,8 @@ class ASTParser {
             case Syntax.Namespace: {
                 this.path.push(ast.name);
 
-                const body = ast.body;
-                const ii = body.length;
-
-                for(let i = 0; i < ii; i++)
-                    this.parseAstItem(body[i]);
+                for(const item of ast.body)
+                    this.parseAstItem(item);
 
                 this.path.pop();
                 break;
@@ -208,8 +203,7 @@ class ASTParser {
 
             case Syntax.ContainerGroup: {
                 const body = ast.body;
-                for(let i = 0; i < body.length; i++) {
-                    const item = body[i];
+                for(const item of body) {
                     this.processContainerGroupNode(item, ast);
                 }
                 break;
