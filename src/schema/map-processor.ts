@@ -5,6 +5,9 @@ import Serializer from './serializer';
 import { Param } from '../ast-parser/param';
 
 export default class MapProcessor extends TemplateProcessor<Param> {
+    private static errors = {
+        keyMustBeGeneric: new Error('Key argument must be generic')
+    };
 
     public encode(serializer: Serializer, args: Param[], value: Map<any, any>) {
         serializer.writeUInt32(value.size);
