@@ -186,3 +186,112 @@ test('it should not encode null properties for optional fields', () => {
     }`));
     assert.deepStrictEqual(schema.decode(schema.encode(['user', { name: null }])), ['user', {}]);
 });
+
+test('encodeGeneric() should encode double precision integers', () => {
+    const schema = new Schema(parse(`type User {
+        user -> double age
+    }`));
+    assert.deepStrictEqual(schema.decode(schema.encode(['user', {
+        age: 10.5
+    }])), ['user', {
+        age: 10.5
+    }]);
+});
+
+test('encodeGeneric() should encode floating point integers', () => {
+    const schema = new Schema(parse(`type User {
+        user -> float age
+    }`));
+    assert.deepStrictEqual(schema.decode(schema.encode(['user', {
+        age: 20.99
+    }])), ['user', {
+        age: 20.989999771118164
+    }]);
+});
+
+test('encodeGeneric() should encode signed 16-bit integer', () => {
+    const schema = new Schema(parse(`type Link {
+        link -> int16 clicks
+    }`));
+    assert.deepStrictEqual(schema.decode(schema.encode(['link', {
+        clicks: 32767
+    }])), ['link', {
+        clicks: 32767
+    }]);
+});
+
+test('encodeGeneric() should encode unsigned 16-bit integer', () => {
+    const schema = new Schema(parse(`type Link {
+        link -> uint16 clicks
+    }`));
+    assert.deepStrictEqual(schema.decode(schema.encode(['link', {
+        clicks: 0xffff
+    }])), ['link', {
+        clicks: 0xffff
+    }]);
+});
+
+test('encodeGeneric() should encode unsigned 8-bit integer', () => {
+    const schema = new Schema(parse(`type Link {
+        link -> uint8 id
+    }`));
+    assert.deepStrictEqual(schema.decode(schema.encode(['link', {
+        id: 255
+    }])), ['link', {
+        id: 255
+    }]);
+});
+
+test('encodeGeneric() should encode signed 8-bit integer', () => {
+    const schema = new Schema(parse(`type Link {
+        link -> int8 id
+    }`));
+    assert.deepStrictEqual(schema.decode(schema.encode(['link', {
+        id: 127
+    }])), ['link', {
+        id: 127
+    }]);
+});
+
+test('encodeGeneric() should encode signed 32-bit integer', () => {
+    const schema = new Schema(parse(`type User {
+        user -> int32 id
+    }`));
+    assert.deepStrictEqual(schema.decode(schema.encode(['user', {
+        id: 0xffffff
+    }])), ['user', {
+        id: 0xffffff
+    }]);
+});
+
+test('encodeGeneric() should encode boolean properties', () => {
+    const schema = new Schema(parse(`type Link {
+        link -> bool clicked
+    }`));
+    assert.deepStrictEqual(schema.decode(schema.encode(['link', {
+        clicked: true
+    }])), ['link', {
+        clicked: true
+    }]);
+});
+
+test('decode() should throw when received an invalid CRC hash', () => {
+    const schema = new Schema(parse(`type Link {
+        link -> bool clicked
+    }`));
+    assert.throws(
+        () => schema.decode(Buffer.from('a0785a03', 'hex')),
+        new Error('No container found for CRC hash of 56260768')
+    );
+});
+
+test('encodeContainerParam() should encode default property for generic property', () => {
+    const schema = new Schema(parse(`type Link {
+        link -> bool clicked
+    }`));
+    assert.deepStrictEqual(schema.decode(schema.encode(
+        ['link', {}]
+    )), ['link', {
+        clicked: false
+    }]);
+});
