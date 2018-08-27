@@ -2,7 +2,7 @@ import TemplateProcessor from './template-processor';
 import { PropertyType } from './template-processor';
 import Deserializer from './deserializer';
 import Serializer from './serializer';
-import { Param } from '../ast-parser/param';
+import { Param, Params } from '../ast-parser/param';
 
 export default class MapProcessor extends TemplateProcessor<Param> {
     private static errors = {
@@ -12,9 +12,15 @@ export default class MapProcessor extends TemplateProcessor<Param> {
     public encode(serializer: Serializer, args: Param[], value: Map<any, any>) {
         serializer.writeUInt32(value.size);
 
+        const [keyParam, valueParam] = args;
+
+        if(keyParam.type !== Params.Generic) {
+            throw MapProcessor.errors.keyMustBeGeneric;
+        }
+
         for(const key of value.keys()) {
-            this.schema.encodeContainerParam(serializer, args[0], key);
-            this.schema.encodeContainerParam(serializer, args[1], value.get(key));
+            this.schema.encodeGeneric(serializer, keyParam.name, key);
+            this.schema.encodeContainerParam(serializer, valueParam, value.get(key));
         }
     }
 
