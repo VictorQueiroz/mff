@@ -19,7 +19,7 @@ function getSchema(text: string) {
 test('it should support Map template', () => {
     const schema = getSchema(`
         type Object {
-            object -> Map<uint32, string> properties
+            object -> Map<int32, string> properties
         }
     `);
 
@@ -29,9 +29,26 @@ test('it should support Map template', () => {
         map.set(crypto.randomBytes(4).readInt32LE(0), crypto.randomBytes(4).toString('hex'));
     }
 
-    schema.encode(['object', {
+    assert.deepEqual(schema.decode(schema.encode(['object', {
+        properties: map
+    }])), ['object', {
         properties: map
     }]);
+});
+
+test('Map<generic, any> should throw when key argument is not generic', async () => {
+    const schema = getSchema(`
+        type UserId {
+            userId -> uint32 value
+        }
+        type Object {
+            object -> Map<UserId, string> properties
+        }
+    `);
+
+    assert.throws(() => schema.encode(['object', {
+        properties: new Map()
+    }]), new Error('Key argument must be generic'));
 });
 
 test('it should encode complex containers', () => {
