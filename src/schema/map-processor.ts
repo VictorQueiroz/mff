@@ -27,9 +27,26 @@ export default class MapProcessor extends TemplateProcessor<Param> {
     public decode(deserializer: Deserializer, args: Param[], result: any, prop: PropertyType) {
         const length = deserializer.readUInt32();
 
-        for(let i = 0; i < length; i++) {
-            this.schema.decodeContainerParam(deserializer, args[0], key, prop);
-            this.schema.decodeContainerParam(deserializer, args[1], value.get(key), prop);
+        const [
+            key,
+            value
+        ] = args;
+
+        if(key.type !== Params.Generic) {
+            throw MapProcessor.errors.keyMustBeGeneric;
         }
+
+        const map = new Map();
+
+        for(let i = 0; i < length; i++) {
+            const data: any = {};
+            const keyValue = this.schema.decodeGeneric(deserializer, key.name);
+
+            this.schema.decodeContainerParam(deserializer, value, data, 'result');
+
+            map.set(keyValue, data.result);
+        }
+
+        result[prop] = map;
     }
 }
