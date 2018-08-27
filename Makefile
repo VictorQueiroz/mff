@@ -5,8 +5,11 @@ release: test
 	./node_modules/.bin/tsc && \
 	cp -rv src/code-generator/templates lib/code-generator
 
+coverage:
+	npx nyc --report-dir dist/coverage --reporter html make test
+
 test:
-	./node_modules/.bin/sarg \
+	npx sarg \
 	--require=ts-node/register \
 	--bail \
 	--ignore "test/utilities.ts" \
