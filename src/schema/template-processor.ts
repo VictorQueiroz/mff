@@ -5,12 +5,12 @@ import { Param } from '../ast-parser/param';
 
 export type PropertyType = string | number;
 
-export default abstract class TemplateProcessor<Argument = Param, Input = any> {
-    schema: Schema;
-
-    constructor(schema: Schema) {
-        this.schema = schema;
+export default abstract class TemplateProcessor<
+    Argument = Param,
+    Input extends any = any
+> {
+    constructor(public schema: Schema) {
     }
-    abstract encode(serializer: Serializer, args: Argument[], value: Input): void;
-    abstract decode(deserializer: Deserializer, input: Argument[], result: any, prop: any): void;
+    public abstract encode(serializer: Serializer, args: Argument[], value: Input): void;
+    public abstract decode(deserializer: Deserializer, input: Argument[], result: any, prop: any): void;
 }

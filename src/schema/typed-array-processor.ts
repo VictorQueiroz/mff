@@ -18,10 +18,10 @@ const typedArrays = {
 };
 
 export default class TypedArrayProcessor extends TemplateProcessor<Param> {
-    static errorNonGeneric = new Error(`Input for typed array must be generic`);
-    static errorUnexpectedValue = new Error(`Unexpected typed array type for typed array encoder`);
+    private static errorNonGeneric = new Error(`Input for typed array must be generic`);
+    private static errorUnexpectedValue = new Error(`Unexpected typed array type for typed array encoder`);
 
-    decode(deserializer: Deserializer, args: Param[], result: any, prop: PropertyType) {
+    public decode(deserializer: Deserializer, args: Param[], result: any, prop: PropertyType) {
         const length = deserializer.readUInt32();
         const arrayOf = args[0];
 
@@ -42,7 +42,17 @@ export default class TypedArrayProcessor extends TemplateProcessor<Param> {
         result[prop] = output;
     }
 
-    _encode(serializer: Serializer, arrayOf: ParamGeneric, input: any) {
+    public encode(serializer: Serializer, args: Param[], input: any) {
+        const arrayOf = args[0];
+
+        if(arrayOf.type !== Params.Generic) {
+            throw TypedArrayProcessor.errorNonGeneric;
+        }
+
+        this._encode(serializer, arrayOf, input);
+    }
+
+    private _encode(serializer: Serializer, arrayOf: ParamGeneric, input: any) {
         let valid: boolean = false;
         const safeName = Object.prototype.toString.call(input);
 
@@ -76,14 +86,5 @@ export default class TypedArrayProcessor extends TemplateProcessor<Param> {
 
         serializer.writeUInt32(length);
         serializer.writeBuffer(Buffer.from(input));
-    }
-
-    encode(serializer: Serializer, args: Param[], input: any) {
-        const arrayOf = args[0];
-
-        if(arrayOf.type != Params.Generic)
-            throw TypedArrayProcessor.errorNonGeneric;
-
-        this._encode(serializer, arrayOf, input);
     }
 }

@@ -4,8 +4,9 @@ import Deserializer from './deserializer';
 import Serializer from './serializer';
 import { Param } from '../ast-parser/param';
 
-export default class OptionalProcessor extends TemplateProcessor<Param> {
-    encode(serializer: Serializer, args: Param[], value: Map<any, any>) {
+export default class MapProcessor extends TemplateProcessor<Param> {
+
+    public encode(serializer: Serializer, args: Param[], value: Map<any, any>) {
         serializer.writeUInt32(value.size);
 
         for(const key of value.keys()) {
@@ -14,7 +15,7 @@ export default class OptionalProcessor extends TemplateProcessor<Param> {
         }
     }
 
-    decode(deserializer: Deserializer, args: Param[], result: any, prop: PropertyType) {
+    public decode(deserializer: Deserializer, args: Param[], result: any, prop: PropertyType) {
         const length = deserializer.readUInt32();
 
         for(let i = 0; i < length; i++) {

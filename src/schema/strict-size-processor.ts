@@ -10,7 +10,7 @@ import Serializer from './serializer';
 export type Param = DefaultParam | NodeLiteralNumber;
 
 export default class StrictSizeProcessor extends TemplateProcessor<Param> {
-    validate(result: any, length: number) {
+    public validate(result: any, length: number) {
         let valid: boolean = false;
 
         if(Array.isArray(result) || typeof result == 'string')
@@ -23,7 +23,7 @@ export default class StrictSizeProcessor extends TemplateProcessor<Param> {
         return valid;
     }
 
-    encode(serializer: Serializer, args: Param[], input: any) {
+    public encode(serializer: Serializer, args: Param[], input: any) {
         const firstArgument = args[0];
         const secondArgument = args[1];
         let length: number = 0;
@@ -41,7 +41,7 @@ export default class StrictSizeProcessor extends TemplateProcessor<Param> {
         this.schema.encodeContainerParam(serializer, firstArgument, input);
     }
 
-    decode(deserializer: Deserializer, args: Param[], result: any, prop: PropertyType) {
+    public decode(deserializer: Deserializer, args: Param[], result: any, prop: PropertyType) {
         const firstArgument = args[0];
         const secondArgument = args[1];
 
