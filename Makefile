@@ -10,6 +10,6 @@ test:
 	--require=ts-node/register \
 	--bail \
 	--ignore "test/utilities.ts" \
-	-r test
+	"test/**/*.ts"
 
 .PHONY: test release docs
