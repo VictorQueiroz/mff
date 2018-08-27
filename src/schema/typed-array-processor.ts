@@ -25,8 +25,9 @@ export default class TypedArrayProcessor extends TemplateProcessor<Param> {
         const length = deserializer.readUInt32();
         const arrayOf = args[0];
 
-        if(arrayOf.type != Params.Generic)
+        if(arrayOf.type !== Params.Generic) {
             throw TypedArrayProcessor.errorNonGeneric;
+        }
 
         const buffer = deserializer.readBuffer(length);
         let output: any;
@@ -58,29 +59,30 @@ export default class TypedArrayProcessor extends TemplateProcessor<Param> {
 
         switch(arrayOf.name) {
             case Generics.Int8:
-                valid = typedArrays.Int8Array == safeName;
+                valid = typedArrays.Int8Array === safeName;
                 break;
             case Generics.UInt8:
-                valid = typedArrays.Uint8Array == safeName;
+                valid = typedArrays.Uint8Array === safeName;
                 break;
             case Generics.Int16:
-                valid = typedArrays.Int16Array == safeName;
+                valid = typedArrays.Int16Array === safeName;
                 break;
             case Generics.UInt16:
-                valid = typedArrays.Uint16Array == safeName;
+                valid = typedArrays.Uint16Array === safeName;
                 break;
             case Generics.Int32:
-                valid = typedArrays.Int32Array == safeName;
+                valid = typedArrays.Int32Array === safeName;
                 break;
             case Generics.UInt32:
-                valid = typedArrays.Uint32Array == safeName;
+                valid = typedArrays.Uint32Array === safeName;
                 break;
             default:
                 valid = Buffer.isBuffer(input);
         }
 
-        if(!valid)
+        if(!valid) {
             throw TypedArrayProcessor.errorUnexpectedValue;
+        }
 
         const length = input.byteLength;
 

@@ -13,12 +13,13 @@ export default class StrictSizeProcessor extends TemplateProcessor<Param> {
     public validate(result: any, length: number) {
         let valid: boolean = false;
 
-        if(Array.isArray(result) || typeof result == 'string')
-            valid = result.length == length;
-        else if(typeof result == 'number')
-            valid = result == length;
-        else if(isTypedArray(result) || Buffer.isBuffer(result))
-            valid = result.byteLength == length;
+        if(Array.isArray(result) || typeof result === 'string') {
+            valid = result.length === length;
+        } else if(typeof result === 'number') {
+            valid = result === length;
+        } else if(isTypedArray(result) || Buffer.isBuffer(result)) {
+            valid = result.byteLength === length;
+        }
 
         return valid;
     }
@@ -28,15 +29,17 @@ export default class StrictSizeProcessor extends TemplateProcessor<Param> {
         const secondArgument = args[1];
         let length: number = 0;
 
-        if(firstArgument.type == Syntax.LiteralNumber)
+        if(firstArgument.type === Syntax.LiteralNumber) {
             throw new Error(`Invalid value for first argument`);
-        else if(secondArgument.type == Syntax.LiteralNumber)
+        } else if(secondArgument.type === Syntax.LiteralNumber) {
             length = secondArgument.value;
-        else
+        } else {
             throw new Error(`Invalid value for second argument, must be a literal number`);
+        }
 
-        if(!this.validate(input, length))
+        if(!this.validate(input, length)) {
             throw new Error(`Received invalid size for strict-sized param`);
+        }
 
         this.schema.encodeContainerParam(serializer, firstArgument, input);
     }
@@ -47,16 +50,18 @@ export default class StrictSizeProcessor extends TemplateProcessor<Param> {
 
         let length = 0;
 
-        if(firstArgument.type == Syntax.LiteralNumber)
+        if(firstArgument.type === Syntax.LiteralNumber) {
             throw new Error(`Invalid first argument for strict size template`);
-        else if(secondArgument.type == Syntax.LiteralNumber)
+        } else if(secondArgument.type === Syntax.LiteralNumber) {
             length = secondArgument.value;
-        else
+        } else {
             throw new Error(`Invalid value for second argument, must be a literal number`);
+        }
 
         this.schema.decodeContainerParam(deserializer, firstArgument, result, prop);
 
-        if(!this.validate(result[prop], length))
+        if(!this.validate(result[prop], length)) {
             throw new Error(`Received invalid size for strict-sized param`);
+        }
     }
 }
