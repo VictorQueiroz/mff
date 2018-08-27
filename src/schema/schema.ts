@@ -45,7 +45,7 @@ class Schema {
         }
     }
 
-    decodeGeneric(des: Deserializer, type: string): string | number | boolean {
+    decodeGeneric(des: Deserializer, type: Generics): string | number | boolean {
         switch(type) {
             case Generics.Double:
                 return des.readDouble();
