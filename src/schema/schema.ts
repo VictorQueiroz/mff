@@ -8,6 +8,7 @@ import TemplateProcessor from './template-processor';
 import VectorProcessor from './vector-processor';
 import OptionalProcessor from './optional-processor';
 import TypedArrayProcessor from './typed-array-processor';
+import MapProcessor from './map-processor';
 
 export interface SchemaOptions {
     templateProcessors?: Map<string, TemplateProcessor>;
@@ -27,6 +28,7 @@ class Schema {
         this.templateProcessors.set('StrictSize', new StrictSizeProcessor(this));
         this.templateProcessors.set('Vector', new VectorProcessor(this));
         this.templateProcessors.set('TypedArray', new TypedArrayProcessor(this));
+        this.templateProcessors.set('Map', new MapProcessor(this));
         this.templateProcessors.set('Optional', new OptionalProcessor(this));
 
         if(options && options.templateProcessors) {

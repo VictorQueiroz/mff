@@ -12,6 +12,28 @@ const containers = parse(`
     namespaceSeparator: '.'
 });
 
+function getSchema(text: string) {
+    return new Schema(parse(text));
+}
+
+test('it should support Map template', () => {
+    const schema = getSchema(`
+        type Object {
+            object -> Map<uint32, string> properties
+        }
+    `);
+
+    const map = new Map<number, string>();
+
+    for(let i = 0; i < 100; i++) {
+        map.set(crypto.randomBytes(4).readInt32LE(0), crypto.randomBytes(4).toString('hex'));
+    }
+
+    schema.encode(['object', {
+        properties: map
+    }]);
+});
+
 test('it should encode complex containers', () => {
     const buffer = new Schema(containers).encode(['user', {
         name: 'simple user',

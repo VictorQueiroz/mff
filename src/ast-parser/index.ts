@@ -16,6 +16,7 @@ import { Params, Param } from './param';
 import ASTPreprocessor from './ast-preprocessor';
 import StrictSizeProcessor from './strict-size-processor';
 import { isGeneric } from './utils';
+import MapProcessor from './map-processor';
 
 export interface ASTParserOptions {
     path?: string[];
@@ -62,6 +63,7 @@ class ASTParser {
 
         this.templateProcessors.set('Vector', new VectorProcessor(this));
         this.templateProcessors.set('Optional', new OptionalProcessor(this));
+        this.templateProcessors.set('Map', new MapProcessor(this));
         this.templateProcessors.set('TypedArray', new TypedArrayProcessor(this));
         this.templateProcessors.set('StrictSize', new StrictSizeProcessor(this));
     }
