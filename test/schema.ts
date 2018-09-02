@@ -237,6 +237,29 @@ test('encodeGeneric() should encode double precision integers', () => {
     }]);
 });
 
+test('decodeGeneric() should throw when received NaN for number value', () => {
+    const schema = new Schema(parse(`type User {
+        user -> double age
+    }`));
+    assert.throws(() => {
+        const buffer = schema.encode(['user', {
+            age: 0
+        }]);
+        buffer.writeDoubleLE(NaN, buffer.byteLength - 8);
+
+        schema.decode(buffer);
+    }, new Error('Expected a number but got a NaN value instead'));
+});
+
+test('encodeGeneric() should throw when received NaN for number value', () => {
+    const schema = new Schema(parse(`type User {
+        user -> double age
+    }`));
+    assert.throws(() => schema.encode(['user', {
+        age: NaN
+    }]), new Error('Expected a number but got a NaN value instead'));
+});
+
 test('encodeGeneric() should encode floating point integers', () => {
     const schema = new Schema(parse(`type User {
         user -> float age

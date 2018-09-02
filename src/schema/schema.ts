@@ -161,9 +161,12 @@ class Schema {
 
     decodeContainerParam(deserializer: Deserializer, param: Param, result: any, prop: PropertyType): any {
         switch(param.type) {
-            case Params.Generic:
-                result[prop] = this.decodeGeneric(deserializer, param.name);
+            case Params.Generic: {
+                const decoded = this.decodeGeneric(deserializer, param.name);
+                this.validateGeneric(param.name, decoded);
+                result[prop] = decoded;
                 break;
+            }
             case Params.Reference:
                 result[prop] = this.decode(deserializer);
                 break;
