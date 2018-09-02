@@ -213,12 +213,45 @@ class Schema {
         throw new Error(`Could not find default value for generic param`);
     }
 
+    validateGeneric(type: Generics, value: any) {
+        switch(type) {
+            case Generics.Double:
+            case Generics.Float:
+            case Generics.Int16:
+            case Generics.UInt16:
+            case Generics.UInt8:
+            case Generics.Int8:
+            case Generics.Int32:
+            case Generics.UInt32:
+                if(typeof value !== 'number') {
+                    throw new Error(`Expected a number but got ${typeof value} instead`);
+                }
+                if(isNaN(value)) {
+                    throw new Error('Expected a number but got a NaN value instead');
+                }
+                break;
+            case Generics.String:
+                if(typeof value !== 'string') {
+                    throw new Error(`Expected a string but got ${typeof value}`);
+                }
+                break;
+            case Generics.Boolean:
+                if(typeof value !== 'boolean') {
+                    throw new Error(`Expected a boolean but got ${typeof value}`);
+                }
+                break;
+            default:
+                throw new Error(`Invalid generic type of ${type}`);
+        }
+    }
+
     encodeContainerParam(serializer: Serializer, param: Param, value: any) {
         switch(param.type) {
             case Params.Generic:
                 if(typeof value === 'undefined') {
                     value = this.getGenericDefault(param.name);
                 }
+                this.validateGeneric(param.name, value);
                 this.encodeGeneric(serializer, param.name, value);
                 break;
             case Params.Reference:
