@@ -216,7 +216,7 @@ class Schema {
     encodeContainerParam(serializer: Serializer, param: Param, value: any) {
         switch(param.type) {
             case Params.Generic:
-                if(value == undefined) {
+                if(typeof value === 'undefined') {
                     value = this.getGenericDefault(param.name);
                 }
                 this.encodeGeneric(serializer, param.name, value);
