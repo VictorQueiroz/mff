@@ -4,3 +4,5 @@ src/schema/
 src/index.ts
 test/
 build/
+.history/
+dist/
