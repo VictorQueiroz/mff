@@ -1,12 +1,27 @@
 export default class Serializer {
-    private buffers: Buffer[];
+    private buffer: ArrayBuffer;
+    private view: Buffer;
+    private offset: number = 0;
 
-    constructor() {
-        this.buffers = [];
+    constructor(private length: number = 0xfff) {
+        this.buffer = new ArrayBuffer(this.length);
+        this.view = Buffer.from(this.buffer);
     }
 
     public getBuffer() {
-        return Buffer.concat(this.buffers);
+        return this.view.slice(0, this.offset);
+    }
+
+    allocate(length: number) {
+        if((this.offset + length) >= this.length) {
+            const { view: oldView } = this;
+
+            this.length += length + 0xfff;
+            this.buffer = new ArrayBuffer(this.length);
+            this.view = Buffer.from(this.buffer);
+
+            oldView.copy(this.view, 0);
+        }
     }
 
     writeBuffer(source: Buffer) {
@@ -14,11 +29,10 @@ export default class Serializer {
             throw new Error('Argument must be a buffer instance');
 
         const length = source.byteLength;
-        const result = Buffer.allocUnsafe(length);
 
-        source.copy(result, 0, 0, length);
-
-        this.buffers.push(result);
+        this.allocate(length);
+        source.copy(this.view, this.offset, 0, length);
+        this.offset += length;
     }
 
     writeBoolean(n: boolean) {
@@ -28,51 +42,51 @@ export default class Serializer {
     }
 
     writeInt8(n: number) {
-        const buffer = Buffer.allocUnsafe(1);
-        buffer.writeInt8(n, 0);
-        this.buffers.push(buffer);
+        this.allocate(1);
+        this.view.writeInt8(n, this.offset);
+        this.offset++;
     }
 
     writeUInt8(n: number) {
-        const buffer = Buffer.allocUnsafe(1);
-        buffer.writeUInt8(n, 0);
-        this.buffers.push(buffer);
+        this.allocate(1);
+        this.view.writeUInt8(n, this.offset);
+        this.offset++;
     }
 
     writeUInt16(n: number) {
-        const buffer = Buffer.allocUnsafe(2);
-        buffer.writeUInt16LE(n, 0);
-        this.buffers.push(buffer);
+        this.allocate(2);
+        this.view.writeUInt16LE(n, this.offset);
+        this.offset += 2;
     }
 
     writeInt16(n: number) {
-        const buffer = Buffer.allocUnsafe(2);
-        buffer.writeInt16LE(n, 0);
-        this.buffers.push(buffer);
+        this.allocate(2);
+        this.view.writeInt16LE(n, this.offset);
+        this.offset += 2;
     }
 
     writeUInt32(n: number) {
-        const buffer = Buffer.allocUnsafe(4);
-        buffer.writeUInt32LE(n, 0);
-        this.buffers.push(buffer);
+        this.allocate(4);
+        this.view.writeUInt32LE(n, this.offset);
+        this.offset += 4;
     }
 
     writeInt32(n: number) {
-        const buffer = Buffer.allocUnsafe(4);
-        buffer.writeInt32LE(n, 0);
-        this.buffers.push(buffer);
+        this.allocate(4);
+        this.view.writeInt32LE(n, this.offset);
+        this.offset += 4;
     }
 
     writeDouble(n: number) {
-        const buffer = Buffer.allocUnsafe(8);
-        buffer.writeDoubleLE(n, 0);
-        this.buffers.push(buffer);
+        this.allocate(8);
+        this.view.writeDoubleLE(n, this.offset);
+        this.offset += 8;
     }
 
     writeFloat(n: number) {
-        const buffer = Buffer.allocUnsafe(4);
-        buffer.writeFloatLE(n, 0);
-        this.buffers.push(buffer);
+        this.allocate(4);
+        this.view.writeFloatLE(n, this.offset);
+        this.offset += 4;
     }
 
     writeString(n: string) {
