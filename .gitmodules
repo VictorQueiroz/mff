@@ -1,0 +1,3 @@
+[submodule "deps/btc"]
+	path = deps/btc
+	url = git@github.com:VictorQueiroz/btc.git
