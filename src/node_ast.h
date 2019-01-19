@@ -12,4 +12,7 @@ private:
     static NAN_METHOD(Parse);
 };
 
+#define BTC_CHECK_STATUS_VOID(expression) \
+    if(expression != BTC_OK) return;
+
 #endif

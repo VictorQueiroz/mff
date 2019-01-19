@@ -1,4 +1,4 @@
-#include "btc.h"
+#include <btc.h>
 #include "node_ast.h"
 #include <nan.h>
 
@@ -18,6 +18,7 @@ namespace Btc {
         const char* LiteralString = "LiteralString";
         const char* LiteralNumber = "LiteralNumber";
         const char* MemberExpression = "MemberExpression";
+        const char* TemplateDeclaration = "TemplateDeclaration";
     }
 
     int Ok = BTC_OK;
@@ -43,6 +44,10 @@ namespace Btc {
             status = btc_parse(parser);
             BTC_CHECK_STATUS_VOID(status);
         }
+        void PrintFailure() {
+            btc_token* token = btc_tokens_list_get(parser->tokens_list, parser->current_token == 0 ? 0 : parser->current_token - 1);
+            fprintf(stderr, "failure at token \"%s\" (line = %lu)\n", token->allocated, token->range.start_line_number);
+        }
         bool Failed() {
             return status != Ok;
         }
@@ -53,7 +58,7 @@ namespace Btc {
         btc_tokenizer* tokenizer;
     };
 
-    void ConvertAstItem(btc_ast_item* item, Local<Object> output);
+    void ConvertAstItem(btc_ast_item*, Local<Object>);
 }
 
 void ConvertTypeAlias(btc_alias alias, Local<Object> result) {
@@ -65,13 +70,13 @@ void ConvertTypeAlias(btc_alias alias, Local<Object> result) {
 }
 
 void ConvertLinkedAstList(btc_ast_list* list, Local<Array> output) {
-    btc_linked_ast_item* result = list->first_item;
-
-    while(result) {
-        Local<Object> item = Nan::New<Object>();
-        Btc::ConvertAstItem(result->value, item);
+    btc_ast_item* node = nullptr;
+    Local<Object> item;
+    vector_foreach(list, i) {
+        node = btc_ast_list_get(list, i);
+        item = Nan::New<Object>();
+        Btc::ConvertAstItem(node, item);
         output->Set(Nan::New<Number>(output->Length()), item);
-        result = result->next_item;
     }
 }
 
@@ -99,7 +104,7 @@ void ConvertContainerParam(btc_ast_container_param* item, Local<Object> output){
 
     Btc::ConvertAstItem(item->type, type);
 
-    if(item->default_value != NULL) {
+    if(item->default_value != nullptr) {
         Local<Object> defaultValue = Nan::New<Object>();
         Btc::ConvertAstItem(item->default_value, defaultValue);
         output->Set(Nan::New<String>("default").ToLocalChecked(), defaultValue);
@@ -152,6 +157,17 @@ void ConvertMemberExpression(btc_member_expression* expr, Local<Object> result) 
     result->Set(Nan::New<String>("right").ToLocalChecked(), Nan::New<String>(expr->right.value).ToLocalChecked());
 }
 
+void ConvertTemplateDeclaration(btc_template_declaration* item, Local<Object> result) {
+    Local<Array> arguments = Nan::New<Array>();
+    ConvertLinkedAstList(item->arguments, arguments);
+
+    Local<Object> body = Nan::New<Object>();
+    Btc::ConvertAstItem(item->body, body);
+
+    result->Set(Nan::New<String>("arguments").ToLocalChecked(), arguments);
+    result->Set(Nan::New<String>("body").ToLocalChecked(), body);
+}
+
 void Btc::ConvertAstItem(btc_ast_item* item, Local<Object> result) {
     const char* type;
 
@@ -200,8 +216,13 @@ void Btc::ConvertAstItem(btc_ast_item* item, Local<Object> result) {
             type = Btc::Syntax::Alias;
             ConvertTypeAlias(item->alias, result);
             break;
+        case BTC_TEMPLATE_DECLARATION:
+            type = Btc::Syntax::TemplateDeclaration;
+            ConvertTemplateDeclaration(item->template_declaration, result);
+            break;
         default:
             type = NULL;
+            fprintf(stderr, "invalid ast item = %d (line number = %d)\n", item->type, item->range.start_line_number);
             Nan::ThrowError("Received invalid ast item type");
     }
 
@@ -221,8 +242,10 @@ NAN_METHOD(Ast::Parse) {
     text[length] = '\0';
 
     parser->Parse(text);
+    free(text);
 
     if(parser->Failed()) {
+        parser->PrintFailure();
         Nan::ThrowError("Failed to parse");
         return;
     }

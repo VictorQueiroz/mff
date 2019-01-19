@@ -1,5 +1,3 @@
 type Comment {
-    comment {
-        string text = ""
-    }
+    comment -> string text
 }
