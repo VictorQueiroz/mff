@@ -10,7 +10,6 @@
         "object-literal-sort-keys": false,
         "trailing-comma": false,
         "whitespace": false,
-        "member-access": false,
         "curly": false,
         "new-parens": false,
         "triple-equals": false,
