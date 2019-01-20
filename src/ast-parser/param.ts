@@ -15,7 +15,7 @@ export interface ParamTemplate<T = any> {
 export interface ParamReference {
     type: Params.Reference;
     /**
-     * List of container names that should 
+     * List of container names that should
      * be in this param
      */
     containers: string[];
