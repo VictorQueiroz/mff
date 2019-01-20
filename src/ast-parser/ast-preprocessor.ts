@@ -10,7 +10,7 @@ export interface ASTPreprocessorOptions {
 }
 
 /**
- * Process AST before it's really parsed 
+ * Process AST before it's really parsed
  * by ASTParser so we can replace import declaration's
  * with it's AST file contents
  */
