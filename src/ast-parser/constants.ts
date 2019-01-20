@@ -32,7 +32,7 @@ export enum Generics {
     UInt32 = 'uint32',
     UInt64 = 'uint64',
     Boolean = 'bool'
-};
+}
 
 export interface ContainerParam {
     name: string;
