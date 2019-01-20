@@ -1,32 +1,26 @@
 import Parser from './index';
 import { Syntax } from './constants';
+import { Node } from './node';
 
 /**
- * Scan parser context and look for container 
+ * Scan parser context and look for container
  * matches based on expression path.
  *
  * -- Brief description --
- * An expression path is an array of strings determining a container reference, 
- * either it points directly to a container type (matching various containers) or 
+ * An expression path is an array of strings determining a container reference,
+ * either it points directly to a container type (matching various containers) or
  * it points directly to a single container.
- * 
- * Context scanner will look into AST trying to find namespaces that matches the 
+ *
+ * Context scanner will look into AST trying to find namespaces that matches the
  * given path.
  *
  * TODO: Improve searching algorithm and break it in many parts
  */
 class ContextScanner {
-    /**
-     * Root parser
-     */
-    parser: Parser;
-
-
-    constructor(parser: Parser) {
-        this.parser = parser;
+    constructor(private parser: Parser) {
     }
 
-    match(expressionPath: string[]) {
+    public match(expressionPath: string[]) {
         let result: string[][];
         const path = this.parser.path;
 
@@ -44,7 +38,7 @@ class ContextScanner {
         return this._match(expressionPath);
     }
 
-    _match(expressionPath: string[]) {
+    public _match(expressionPath: string[]) {
         const matches = [];
         let body = this.parser.ast;
         let expressionIndex = 0;
@@ -97,6 +91,51 @@ class ContextScanner {
         }
 
         return matches;
+    }
+
+    /**
+     * Resolve a type inside a context
+     * @param name Container name/container type to look for
+     * @param body Body to look for
+     * @param namespace Namespace to start from
+     */
+    public resolveTypeInBody(name: string, body: Node[], namespace: string[]): Node[] {
+        const results = new Array<Node>();
+        for(const node of body) {
+            /**
+             * Since the `name` can't point to a namespace
+             * we have to ignore if this is not a container name or container group
+             */
+            if(namespace.length === 0) {
+                if(node.type !== Syntax.ContainerGroup && node.type !== Syntax.ContainerDeclaration) {
+                    continue;
+                }
+                if(node.type === Syntax.ContainerGroup) {
+                    if(node.name === name) {
+                        results.push(node);
+                        continue;
+                    }
+                    for(let item of node.body) {
+                        if(item.type === Syntax.TemplateDeclaration) {
+                            item = item.body;
+                        }
+                        if(item.type === Syntax.ContainerDeclaration && item.name === name) {
+                            results.push(item);
+                            break;
+                        }
+                    }
+                } else if(name === node.name) {
+                    results.push(node);
+                }
+                continue;
+            } else if(node.type === Syntax.Namespace) {
+                if(node.name === namespace[0]) {
+                    results.push(...this.resolveTypeInBody(name, node.body, namespace.slice(1)));
+                    continue;
+                }
+            }
+        }
+        return results;
     }
 }
 
