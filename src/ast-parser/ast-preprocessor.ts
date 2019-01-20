@@ -33,7 +33,7 @@ class ASTPreprocessor {
         this.ast = ast;
         this.options = options;
         this.aliases = new Map();
-        this.result = ast.reduce((result, node) => result.concat(this.process(node)), <Node[]>[]);
+        this.result = ast.reduce((result, node) => result.concat(this.process(node)), new Array<Node>());
     }
 
     public getResult(): Node[] {
@@ -45,7 +45,7 @@ class ASTPreprocessor {
             case Syntax.Namespace: {
                 const body: Node[] = ast.body.reduce((result, item) => {
                     return result.concat(this.process(item));
-                }, <Node[]>[]);
+                }, new Array<Node>());
 
                 return [{
                     ...ast,
@@ -55,7 +55,7 @@ class ASTPreprocessor {
             case Syntax.ContainerGroup: {
                 const body: Node[] = ast.body.reduce((nodes, node) => {
                     return nodes.concat(this.process(node));
-                }, <Node[]>[]);
+                }, new Array<Node>());
                 return [{
                     ...ast,
                     body
@@ -66,12 +66,12 @@ class ASTPreprocessor {
                     ...ast,
                     body: ast.body.reduce((params, param) => (
                         params.concat(this.process(param))
-                    ), <Node[]>[])
+                    ), new Array<Node>())
                 }];
             case Syntax.Template: {
-                const args = ast.arguments.reduce((args, arg) => {
-                    return args.concat(this.process(arg));
-                }, <Node[]>[]);
+                const args = ast.arguments.reduce((newArgs, arg) => {
+                    return newArgs.concat(this.process(arg));
+                }, new Array<Node>());
                 return [{
                     ...ast,
                     arguments: args

@@ -16,7 +16,7 @@ class StrictSizeProcessor extends TemplateProcessor<Param> {
                 parsed = parsed.concat(super.createCrcString([param]));
 
             return result.concat(parsed);
-        }, <string[]>[]);
+        }, new Array<string>());
     }
     process(args: Node[]) {
         if(args.length != 2)
