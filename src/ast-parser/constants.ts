@@ -12,8 +12,9 @@ export enum Syntax {
     Namespace = 'Namespace',
     LiteralString = 'LiteralString',
     LiteralNumber = 'LiteralNumber',
-    MemberExpression = 'MemberExpression'
-};
+    MemberExpression = 'MemberExpression',
+    TemplateDeclaration = 'TemplateDeclaration'
+}
 
 export enum Generics {
     String = 'string',

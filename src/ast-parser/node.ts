@@ -26,6 +26,12 @@ export interface NodeContainerParam {
     name: string;
 }
 
+export interface NodeTemplateDeclaration {
+    type: Syntax.TemplateDeclaration;
+    arguments: Node[];
+    body: Node;
+}
+
 export interface NodeContainerDeclaration {
     type: Syntax.ContainerDeclaration;
     name: string;
@@ -60,7 +66,7 @@ export interface NodeLiteralNumber {
     value: number;
 }
 
-export type Node = NodeNamespace | NodeIdentifier | NodeTemplate | 
-                    NodeMemberExpression | NodeImportDeclaration | 
+export type Node = NodeNamespace | NodeIdentifier | NodeTemplate |
+                    NodeMemberExpression | NodeImportDeclaration |
                     NodeContainerDeclaration | NodeContainerParam |
-                    NodeContainerGroup | NodeAlias | NodeLiteralNumber;
+                    NodeContainerGroup | NodeAlias | NodeLiteralNumber | NodeTemplateDeclaration;
