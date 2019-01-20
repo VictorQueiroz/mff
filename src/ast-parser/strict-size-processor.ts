@@ -22,7 +22,7 @@ class StrictSizeProcessor extends TemplateProcessor<Param> {
         if(args.length != 2)
             throw new Error(`Invalid length of arguments for StrictSize template`);
 
-        return args.map(arg => {
+        return args.map((arg) => {
             if(arg.type == Syntax.LiteralNumber)
                 return arg;
             return this.parser.parseParamType(arg);
