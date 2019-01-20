@@ -4,7 +4,7 @@ export enum Params {
     Generic = 'Generic',
     Reference = 'Reference',
     Template = 'Template'
-};
+}
 
 export interface ParamTemplate<T = any> {
     type: Params.Template;
