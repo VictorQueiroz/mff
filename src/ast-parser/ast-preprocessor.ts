@@ -86,7 +86,7 @@ class ASTPreprocessor {
                 return [ast];
             }
             case Syntax.ContainerParam: {
-                let paramType = this.process(ast.paramType)[0];
+                const paramType = this.process(ast.paramType)[0];
                 return [{
                     ...ast,
                     paramType
