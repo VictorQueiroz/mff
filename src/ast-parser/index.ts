@@ -27,25 +27,25 @@ export interface ASTParserOptions {
 }
 
 class ASTParser {
-    static defineDefaultOptions(options: any) {
+    public static defineDefaultOptions(options: any) {
         const defaults: any = {
             namespaceSeparator: '::',
             path: []
         };
-        Object.keys(defaults).forEach(prop => {
+        Object.keys(defaults).forEach((prop) => {
             if(!options.hasOwnProperty(prop))
                 options[prop] = defaults[prop];
         });
     }
 
-    ast: Node[];
-    path: string[];
-    parent?: ASTParser;
-    scanner: ContextScanner;
-    options: ASTParserOptions;
-    containers: Container[];
-    namespaceSeparator: string;
-    templateProcessors: Map<string, TemplateProcessor<any>>
+    public ast: Node[];
+    public path: string[];
+    public parent?: ASTParser;
+    public scanner: ContextScanner;
+    public options: ASTParserOptions;
+    public containers: Container[];
+    public namespaceSeparator: string;
+    public templateProcessors: Map<string, TemplateProcessor<any>>;
 
     constructor(ast: Node[], options: ASTParserOptions) {
         ASTParser.defineDefaultOptions(options);
@@ -68,13 +68,13 @@ class ASTParser {
         this.templateProcessors.set('StrictSize', new StrictSizeProcessor(this));
     }
 
-    parse() {
+    public parse() {
         for(const item of this.ast) {
             this.parseAstItem(item);
         }
     }
 
-    parseParamType(paramType: Node): Param {
+    public parseParamType(paramType: Node): Param {
         switch(paramType.type) {
             case Syntax.Identifier: {
                 const type = paramType.value;
@@ -93,19 +93,27 @@ class ASTParser {
 
                 return {
                     type: Params.Reference,
-                    containers: matches.map(m => m.join(this.namespaceSeparator))
+                    containers: matches.map((m) => m.join(this.namespaceSeparator))
                 };
             }
             case Syntax.Template: {
                 const templateProcessor = this.templateProcessors.get(paramType.name);
+                let outputArguments: any[];
 
-                if(!templateProcessor)
-                    throw new Error(`Unexpected template variable "${paramType.name}"`);
+                if(!templateProcessor) {
+                    const results = this.scanner.resolveTypeInBody(paramType.name, this.ast, this.path);
+                    if(results.length === 0) {
+                        throw new Error(`Unexpected template variable "${paramType.name}"`);
+                    }
+                    outputArguments = paramType.arguments;
+                } else {
+                    outputArguments = templateProcessor.process(paramType.arguments);
+                }
 
                 return {
                     type: Params.Template,
                     name: paramType.name,
-                    arguments: templateProcessor.process(paramType.arguments)
+                    arguments: outputArguments
                 };
             }
             case Syntax.MemberExpression: {
@@ -117,7 +125,7 @@ class ASTParser {
 
                 return {
                     type: Params.Reference,
-                    containers: matches.map(m => m.join(this.namespaceSeparator))
+                    containers: matches.map((m) => m.join(this.namespaceSeparator))
                 };
             }
         }
@@ -125,7 +133,7 @@ class ASTParser {
         throw new Error(`Unexpected param type "${paramType.type}"`);
     }
 
-    processMemberExpression(paramType: Node): string[] {
+    public processMemberExpression(paramType: Node): string[] {
         if(paramType.type == Syntax.MemberExpression) {
             const left = this.processMemberExpression(paramType.left);
             return [...left, paramType.right];
@@ -136,18 +144,18 @@ class ASTParser {
         }
     }
 
-    parseContainerParam(param: NodeContainerParam): ContainerParam {
+    public parseContainerParam(param: NodeContainerParam): ContainerParam {
         return {
             name: param.name,
             type: this.parseParamType(param.paramType)
         };
     }
 
-    createCrcString(ast: Node): string {
+    public createCrcString(ast: Node): string {
         switch(ast.type) {
             case Syntax.ContainerDeclaration:
                 return `${this.path.concat([ast.name]).join('.')} -> ` +
-                        `${ast.body.map(node => this.createCrcString(node)).join(',')}`;
+                        `${ast.body.map((node) => this.createCrcString(node)).join(',')}`;
             case Syntax.ContainerParam:
                 return `${ast.name}:${this.createCrcString(ast.paramType)}`;
             case Syntax.Identifier:
@@ -156,18 +164,25 @@ class ASTParser {
                 return `${this.createCrcString(ast.left)}.${ast.right}`;
             case Syntax.Template: {
                 const processor = this.templateProcessors.get(ast.name);
+                let args: string[];
 
-                if(!processor)
-                    throw new Error(`No template processor found to process ${ast.name} arguments`);
+                if(!processor) {
+                    const results = this.scanner.resolveTypeInBody(ast.name, this.ast, this.path);
+                    if(results.length === 0) {
+                        throw new Error(`No template processor found to process ${ast.name} arguments`);
+                    }
+                    args = ast.arguments.map((arg) => this.createCrcString(arg));
+                } else {
+                    args = processor.createCrcString(ast.arguments);
+                }
 
-                const args = processor.createCrcString(ast.arguments);
                 return `${ast.name}<${args.join(',')}>`;
             }
         }
         throw new Error(`Unexpected node type for crc string generation: ${ast.type}`);
     }
 
-    processContainerGroupNode(ast: Node, parent: NodeContainerGroup) {
+    public processContainerGroupNode(ast: Node, parent: NodeContainerGroup) {
         switch(ast.type) {
             case Syntax.ContainerDeclaration: {
                 const params = [];
@@ -185,12 +200,14 @@ class ASTParser {
                 });
                 return;
             }
+            case Syntax.TemplateDeclaration:
+                return;
         }
 
-        throw new Error(`Invalid node for container group "${ast.type}"`)
+        throw new Error(`Invalid node for container group "${ast.type}"`);
     }
 
-    parseAstItem(ast: Node) {
+    public parseAstItem(ast: Node) {
         switch(ast.type) {
             case Syntax.Namespace: {
                 this.path.push(ast.name);

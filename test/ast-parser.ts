@@ -2,6 +2,7 @@ import { Params } from '../src/ast-parser/param';
 import * as assert from 'assert';
 import { parse } from './utilities';
 import { test } from 'sarg';
+import { Syntax } from '../src/ast-parser/constants';
 
 test('it should look for references inside namespaces', () => {
     assert.deepEqual(parse(`
@@ -41,6 +42,33 @@ test('it should look for references inside namespaces', () => {
                 name: 'string'
             }
         }]
+    }]);
+});
+
+test('it should support templates declaration', () => {
+    assert.deepEqual(parse(`
+        type List_t {
+            template<typename T>
+            List -> Vector<T> value
+        }
+        type GetUsers {
+            getUsers -> List<uint8> ids
+        }
+    `), [{
+        id: 2206639134,
+        type: 'GetUsers',
+        params: [{
+            name: 'ids',
+            type: {
+                type: Params.Template,
+                name: 'List',
+                arguments: [{
+                    value: 'uint8',
+                    type: Syntax.Identifier
+                }]
+            }
+        }],
+        name: 'getUsers'
     }]);
 });
 
