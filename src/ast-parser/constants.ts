@@ -1,5 +1,8 @@
 import { Param } from './param';
 
+/**
+ * ATTENTION: It is mandatory that it matches Btc::Syntax "enum" at src/node_ast.cc
+ */
 export enum Syntax {
     Alias = 'Alias',
     String = 'String',
