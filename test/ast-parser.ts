@@ -64,7 +64,9 @@ test('it should support templates declaration', () => {
                 name: 'List',
                 arguments: [{
                     value: 'uint8',
-                    type: Syntax.Identifier
+                    type: Syntax.Identifier,
+                    leadingComments: [],
+                    trailingComments: []
                 }]
             }
         }],

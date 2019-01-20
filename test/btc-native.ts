@@ -12,9 +12,13 @@ test('it should support template declarations', () => {
         body: [{
             arguments: [{
                 value: 'A',
+                leadingComments: [],
+                trailingComments: [],
                 type: 'Identifier'
             }, {
                 value: 'B',
+                leadingComments: [],
+                trailingComments: [],
                 type: 'Identifier'
             }],
             body: {
@@ -23,23 +27,37 @@ test('it should support template declarations', () => {
                 body: [{
                     paramType: {
                         value: 'A',
+                        leadingComments: [],
+                        trailingComments: [],
                         type: 'Identifier'
                     },
                     name: 'x',
+                    leadingComments: [],
+                    trailingComments: [],
                     type: 'ContainerParam'
                 }, {
                     paramType: {
                         value: 'B',
+                        leadingComments: [],
+                        trailingComments: [],
                         type: 'Identifier'
                     },
                     name: 'y',
+                    leadingComments: [],
+                    trailingComments: [],
                     type: 'ContainerParam'
                 }],
+                leadingComments: [],
+                trailingComments: [],
                 type: 'ContainerDeclaration'
             },
+            leadingComments: [],
+            trailingComments: [],
             type: 'TemplateDeclaration'
         }],
         name: 'Vector2DItem_t',
+        leadingComments: [],
+        trailingComments: [],
         type: 'ContainerGroup'
     }]);
 });

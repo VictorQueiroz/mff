@@ -168,6 +168,12 @@ void ConvertTemplateDeclaration(btc_template_declaration* item, Local<Object> re
     result->Set(Nan::New<String>("body").ToLocalChecked(), body);
 }
 
+void CopyCommentsList(btc_comments_list* list, Local<Array> out) {
+    vector_foreach(list, i) {
+        out->Set(i, Nan::New<String>(btc_comments_list_get(list, i)->value).ToLocalChecked());
+    }
+}
+
 void Btc::ConvertAstItem(btc_ast_item* item, Local<Object> result) {
     const char* type;
 
@@ -227,6 +233,12 @@ void Btc::ConvertAstItem(btc_ast_item* item, Local<Object> result) {
     }
 
     if(type != NULL) {
+        Local<Array> leadingComments = Nan::New<Array>();
+        Local<Array> trailingComments = Nan::New<Array>();
+        CopyCommentsList(item->leading_comments, leadingComments);
+        CopyCommentsList(item->trailing_comments, trailingComments);
+        result->Set(Nan::New<String>("leadingComments").ToLocalChecked(), leadingComments);
+        result->Set(Nan::New<String>("trailingComments").ToLocalChecked(), trailingComments);
         result->Set(Nan::New<String>("type").ToLocalChecked(), Nan::New<String>(type).ToLocalChecked());
     }
 }
