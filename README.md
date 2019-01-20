@@ -70,7 +70,11 @@ assert.deepEqual(schema.decode(buffer), ['user', {
 
 ### Schema-dependent TypeScript classes
 
-Code-generated TypeScript classes that are generated using Babel by [CodeGenerator](src/code-generator/index.ts) and can also be submitted to `Schema`. This method is going to become partially obsolete. We'll withdraw the use of Babel for code generation and remove the necessity of having a schema to process the class instances. See usage [here](test/code-generator.ts).
+Code-generated TypeScript classes that are generated using Babel by [CodeGenerator](src/code-generator/index.ts) and can also be submitted to `Schema`.
+
+This method is going to become *partially obsolete*. We'll withdraw the use of Babel for code generation and remove the necessity of having a schema to process the class instances. Meaning that each class will be able to both encode and decode independently instead of having to rely on a upper schema instance.
+
+See usage [here](test/code-generator.ts).
 
 ## Building from source
 ```
