@@ -107,6 +107,12 @@ class ASTPreprocessor {
 
                 return preprocessor.getResult();
             }
+            case Syntax.TemplateDeclaration:
+                return [{
+                    ...ast,
+                    body: this.process(ast.body)[0],
+                    arguments: ast.arguments.map((node) => this.process(node)[0])
+                }];
             case Syntax.Alias: {
                 const result = this.process(ast.value);
 
