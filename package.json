@@ -17,7 +17,7 @@
     "typescript": "^3.0.0-dev.20180522"
   },
   "name": "message-ff",
-  "version": "1.5.7",
+  "version": "1.5.8",
   "license": "MIT",
   "keywords": [
     "binary",
