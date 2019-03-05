@@ -49,7 +49,7 @@ export default class Deserializer {
         else if(value == 0)
             return false;
 
-        console.warn('Got unexpected for boolean. Expected 1 or 0 but got %d instead', value);
+        console.warn('WARNING: Got unexpected value for boolean. Expected 1 or 0 but got %d instead', value);
         return value ? true : false;
     }
 
