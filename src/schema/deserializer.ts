@@ -1,3 +1,5 @@
+import Long from 'long';
+
 export default class Deserializer {
     public offset: number = 0;
     public buffer: Buffer;
@@ -12,6 +14,20 @@ export default class Deserializer {
         this.offset += 1;
 
         return value;
+    }
+
+    public readUInt64(): Long {
+        const low = this.readUInt32();
+        const high = this.readUInt32();
+
+        return new Long(low, high, true);
+    }
+
+    public readInt64(): Long {
+        const low = this.readInt32();
+        const high = this.readInt32();
+
+        return new Long(low, high, false);
     }
 
     public readInt8() {
