@@ -16,12 +16,12 @@ export interface SchemaOptions {
 }
 
 class Schema {
-    containers: Map<string, Container> = new Map();
-    containersCRC: Map<number, Container> = new Map();
-    templateProcessors: Map<string, TemplateProcessor> = new Map();
+    public containers: Map<string, Container> = new Map();
+    public containersCRC: Map<number, Container> = new Map();
+    public templateProcessors: Map<string, TemplateProcessor> = new Map();
 
     constructor(containers: Container[], options?: SchemaOptions) {
-        containers.forEach(container => {
+        containers.forEach((container) => {
             this.containers.set(container.name, container);
             this.containersCRC.set(container.id, container);
         });
@@ -46,7 +46,7 @@ class Schema {
         }
     }
 
-    decodeGeneric(des: Deserializer, type: Generics): string | number | boolean | Long {
+    public decodeGeneric(des: Deserializer, type: Generics): string | number | boolean | Long {
         switch(type) {
             case Generics.Double:
                 return des.readDouble();
@@ -77,7 +77,7 @@ class Schema {
         }
     }
 
-    encodeGeneric(serializer: Serializer, type: string, value: any) {
+    public encodeGeneric(serializer: Serializer, type: string, value: any) {
         switch(type) {
             case Generics.Double:
                 serializer.writeDouble(value);
@@ -121,22 +121,22 @@ class Schema {
     }
 
     /**
-     * Get container name from object. 
+     * Get container name from object.
      * Generally defined as [$container_name, $params]
      */
-    getContainerName(value: any): string {
+    public getContainerName(value: any): string {
         return value[0];
     }
 
-    getContainerParams(value: any): any {
+    public getContainerParams(value: any): any {
         return value[1];
     }
 
-    createObject(container: Container, params: any): any {
+    public createObject(container: Container, params: any): any {
         return [container.name, params];
     }
 
-    decodeTemplate(deserializer: Deserializer, template: ParamTemplate, result: any, prop: PropertyType) {
+    public decodeTemplate(deserializer: Deserializer, template: ParamTemplate, result: any, prop: PropertyType) {
         const processor = this.templateProcessors.get(template.name);
 
         if(!processor)
@@ -145,7 +145,7 @@ class Schema {
         processor.decode(deserializer, template.arguments, result, prop);
     }
 
-    decode(deserializer: Buffer | Deserializer): any {
+    public decode(deserializer: Buffer | Deserializer): any {
         if(Buffer.isBuffer(deserializer)) {
             return this.decode(new Deserializer(deserializer));
         }
@@ -170,7 +170,7 @@ class Schema {
         return this.createObject(container, props);
     }
 
-    decodeContainerParam(deserializer: Deserializer, param: Param, result: any, prop: PropertyType): any {
+    public decodeContainerParam(deserializer: Deserializer, param: Param, result: any, prop: PropertyType): any {
         switch(param.type) {
             case Params.Generic: {
                 const decoded = this.decodeGeneric(deserializer, param.name);
@@ -186,7 +186,7 @@ class Schema {
         }
     }
 
-    encodeReference(serializer: Serializer, containers: string[], value: any) {
+    public encodeReference(serializer: Serializer, containers: string[], value: any) {
         const name = this.getContainerName(value);
 
         if(containers.indexOf(name) == -1)
@@ -195,7 +195,7 @@ class Schema {
         this.encode(value, serializer);
     }
 
-    encodeTemplate(serializer: Serializer, param: ParamTemplate, value: any) {
+    public encodeTemplate(serializer: Serializer, param: ParamTemplate, value: any) {
         const processor = this.templateProcessors.get(param.name);
 
         if(!processor)
@@ -207,7 +207,7 @@ class Schema {
     /**
      * Return default value for generics
      */
-    getGenericDefault(value: Generics): any {
+    public getGenericDefault(value: Generics): any {
         switch(value) {
             case Generics.Double:
             case Generics.Float:
@@ -229,7 +229,7 @@ class Schema {
         throw new Error(`Could not find default value for generic param`);
     }
 
-    validateGeneric(type: Generics, value: any) {
+    public validateGeneric(type: Generics, value: any) {
         switch(type) {
             case Generics.Int64:
             case Generics.UInt64:
@@ -267,7 +267,7 @@ class Schema {
         }
     }
 
-    encodeContainerParam(serializer: Serializer, param: Param, value: any) {
+    public encodeContainerParam(serializer: Serializer, param: Param, value: any) {
         switch(param.type) {
             case Params.Generic:
                 if(typeof value === 'undefined') {
