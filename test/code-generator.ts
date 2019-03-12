@@ -1,69 +1,46 @@
-import * as fs from 'fs';
-import * as ts from 'typescript';
-import * as vm from 'vm';
-import * as assert from 'assert';
-import DefaultSchema from '../src/schema';
-import CodeGenerator from '../src/code-generator';
-import { Container } from '../src/ast-parser/constants';
-import btc from '../src/btc';
 import { test } from 'sarg';
+import { geo, Util } from './schema';
+import { Serializer, Deserializer } from '../src';
+import { expect } from 'chai';
 
-const generator = require('@babel/generator').default;
+test('it should encode and decode constructor', () => {
+    const s = new Serializer();
+    new geo.URL({
+        href: 'https://www.google.com.br'
+    }).encode(s);
+    const url = geo.URL.decode(new Deserializer(s.getBuffer()));
+    expect(url.href).to.be.equal('https://www.google.com.br');
+});
 
-export class Schema extends DefaultSchema {
-    constructors: any;
-    constructor(containers: Container[], constructors: any) {
-        super(containers);
-        this.constructors = constructors;
-    }
-
-    getContainerName(value: any): string {
-        return value.__container_name;
-    }
-
-    getContainerParams(value: any): any {
-        return value;
-    }
-
-    createObject(container: Container, params: any): any {
-        const Constructor = this.constructors.schema.names.get(container.name);
-        return new Constructor(params);
-    }
-}
-
-test('it should compile schema into code', () => {
-    const ast = new CodeGenerator(btc.parse(fs.readFileSync(__dirname + '/schema.txt', 'utf8')), __dirname, {
-        namespaceSeparator: '.'
+test('it should not clone when property content hasn\'t changed', () => {
+    const url = new geo.URL({
+        href: 'https://www.google.com.br'
     });
-    const program = ast.generate();
-    const code = generator(program).code;
+    expect(url.copy({ href: 'https://www.google.com.br' })).to.be.equal(url);
+});
 
-    const output = ts.transpileModule(code, {
-        compilerOptions: {
-            target: ts.ScriptTarget.ESNext,
-            module: ts.ModuleKind.CommonJS
-        }
-    }).outputText;
-    const constructors: any = {};
-    const context = vm.createContext({
-        exports: constructors
+test('it should clone when a property change', () => {
+    const address = new geo.data.Address({
+        url: new geo.URL({
+            href: 'https://www.blomvastgoed.com'
+        }),
+        streetNumber: 4465,
+        streetName: 'Mulberry Avenue'
     });
-    vm.runInNewContext(output, context);
+    expect(address.copy({ streetNumber: 4464 })).to.not.be.equal(address);
+});
 
-    const schema = new Schema(ast.getContainers(), constructors);
-
-    const data = new constructors.geo.data.address({
-        streetName: '',
-        streetNumber: 0,
-        url: new constructors.geo.URL({
-            href: ''
-        })
-    });
-    assert.deepEqual(schema.decode(schema.encode(data)), new constructors.geo.data.address({
-        streetName: '',
-        streetNumber: 0,
-        url: new constructors.geo.URL({
-            href: ''
-        })
-    }));
+test('it should decode containers using Util class', () => {
+    const serializer = new Serializer();
+    new geo.URL({
+        href: 'https://www.google.com.br'
+    }).encode(serializer, false);
+    const deserializer = new Deserializer(serializer.getBuffer());
+    const decoded = new Util().decode(deserializer);
+    if(!(decoded instanceof geo.URL)) {
+        throw new Error('Invalid type');
+    }
+    expect(decoded.href).to.be.deep.equal(new geo.URL({
+        href: 'https://www.google.com.br'
+    }).href);
 });
