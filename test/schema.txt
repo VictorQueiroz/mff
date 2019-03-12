@@ -2,7 +2,7 @@ import "post.txt";
 
 alias Uint8 = uint8;
 alias Buffer = TypedArray<Uint8>;
-alias ObjectId = Optional<StrictSize<Buffer, 12>>;
+alias ObjectId = Optional<Buffer>;
 
 type User {
     user {
