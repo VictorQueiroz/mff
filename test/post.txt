@@ -2,6 +2,8 @@ namespace comment {
     import "comment.txt";
 }
 
+alias long = uint64;
+
 type Post {
-    post -> Vector<comment.Comment> comments
+    post -> long id, Vector<comment.Comment> comments
 }
