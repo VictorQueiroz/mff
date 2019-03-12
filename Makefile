@@ -8,7 +8,10 @@ release: test
 coverage:
 	npx nyc --report-dir dist/coverage --reporter html make test
 
-test:
+generate_schemas:
+	npx ts-node scripts/generate-schemas.ts
+
+test: generate_schemas
 	npx sarg \
 	--require=ts-node/register \
 	--bail \
