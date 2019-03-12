@@ -229,9 +229,9 @@ export class User extends TUser implements IUserParams {
         const v_89370520 = this.id;
         if(v_89370520) {
             serializer.writeUInt8(1);
-            const v_1319602326 /* v_89370520 */ = v_89370520;
-            serializer.writeUInt32(v_1319602326 /* v_89370520 */.length);
-            serializer.writeBuffer(v_1319602326 /* v_89370520 */);
+            const v_2266915407 /* v_89370520 */ = v_89370520;
+            serializer.writeUInt32(v_2266915407 /* v_89370520 */.length);
+            serializer.writeBuffer(v_2266915407 /* v_89370520 */);
         }
         else 
         {
@@ -306,9 +306,9 @@ export class Msg extends TMsg implements IMsgParams {
     }
     public encode(serializer: Serializer, ignoreHeader = true): void {
         if(ignoreHeader != true) serializer.writeUInt32(2407572624);
-        const v_2587621073 /* this.body */ = this.body;
-        serializer.writeUInt32(v_2587621073 /* this.body */.length);
-        serializer.writeBuffer(v_2587621073 /* this.body */);
+        const v_2507323963 /* this.body */ = this.body;
+        serializer.writeUInt32(v_2507323963 /* this.body */.length);
+        serializer.writeBuffer(v_2507323963 /* this.body */);
     }
     public copy(params: Partial<IMsgParams>): Msg {
         let changed = false;
