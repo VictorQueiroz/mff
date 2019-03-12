@@ -9,6 +9,7 @@ import VectorProcessor from './vector-processor';
 import OptionalProcessor from './optional-processor';
 import TypedArrayProcessor from './typed-array-processor';
 import MapProcessor from './map-processor';
+import Long from 'long';
 
 export interface SchemaOptions {
     templateProcessors?: Map<string, TemplateProcessor>;
@@ -45,7 +46,7 @@ class Schema {
         }
     }
 
-    decodeGeneric(des: Deserializer, type: Generics): string | number | boolean {
+    decodeGeneric(des: Deserializer, type: Generics): string | number | boolean | Long {
         switch(type) {
             case Generics.Double:
                 return des.readDouble();
@@ -63,6 +64,10 @@ class Schema {
                 return des.readInt32();
             case Generics.UInt32:
                 return des.readUInt32();
+            case Generics.Int64:
+                return des.readInt64();
+            case Generics.UInt64:
+                return des.readUInt64();
             case Generics.String:
                 return des.readBuffer(des.readUInt32()).toString('utf8');
             case Generics.Boolean:
@@ -103,6 +108,12 @@ class Schema {
                 break;
             case Generics.Boolean:
                 serializer.writeBoolean(value);
+                break;
+            case Generics.UInt64:
+                serializer.writeUInt64(value);
+                break;
+            case Generics.Int64:
+                serializer.writeInt64(value);
                 break;
             default:
                 throw new Error(`Can't encode generic of "${type}"`);
@@ -206,6 +217,8 @@ class Schema {
             case Generics.Int8:
             case Generics.Int32:
             case Generics.UInt32:
+            case Generics.Int64:
+            case Generics.UInt64:
                 return 0;
             case Generics.String:
                 return '';
@@ -218,6 +231,12 @@ class Schema {
 
     validateGeneric(type: Generics, value: any) {
         switch(type) {
+            case Generics.Int64:
+            case Generics.UInt64:
+                if(!Long.isLong(value) && typeof value !== 'number') {
+                    throw new Error(`Expected Long instance of number but got ${typeof value} instead`);
+                }
+                break;
             case Generics.Double:
             case Generics.Float:
             case Generics.Int16:

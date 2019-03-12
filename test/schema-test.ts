@@ -4,6 +4,7 @@ import * as crypto from 'crypto';
 import { parse } from './utilities';
 import { Generics } from '../src/ast-parser/constants';
 import { test } from 'sarg';
+import Long from 'long';
 
 const containers = parse(`
     import "schema.txt";
@@ -81,7 +82,8 @@ test('it should encode complex containers', () => {
         }],
         posts: [
             ['post', {
-                comments: []
+                comments: [],
+                id: Long.UZERO
             }]
         ]
     }]);
