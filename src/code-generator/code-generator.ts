@@ -16,6 +16,11 @@ import ModuleResolver from './module-resolver';
 import UtilClassCodeGenerator from './util-class-code-generator';
 import DataContainerCodeGenerator from './data-container-code-generator';
 import CodeStream from './code-stream';
+import ContainerDeclarationGenerator from './container-declaration-generator';
+import VectorCodeGenerator from './template-generators/vector-code-generator';
+import TypedArrayCodeGenerator from './template-generators/typed-array-code-generator';
+import OptionalCodeGenerator from './template-generators/optional-code-generator';
+import StrictSizeCodeGenerator from './template-generators/strict-size-code-generator';
 
 export interface IFileResult {
     path: string;
@@ -29,7 +34,7 @@ export interface CodeGeneratorOptions extends Partial<ASTParserOptions> {
     moduleAliases: Map<string, string>;
 }
 
-export interface ICodeGenerator {
+export interface ICodeGenerator<T = string> {
     getFiles(): IFileResult[];
     setParentNode(node?: Node): void;
     processNode(node: Node): string;
@@ -38,6 +43,7 @@ export interface ICodeGenerator {
     getPackageName(): string;
     increaseDepth(): void;
     decreaseDepth(): void;
+    generate(node: Node): T;
     getContainers(): Container[];
     getContainer(name: string): Container;
     getNodeListFromParamExpression(node: Node): Node[];
@@ -57,9 +63,11 @@ export interface ICodeGenerator {
     getCurrentPath(): string[];
     addFile(file: Pick<IFileResult, 'path' | 'contents'>): void;
     getClassNameFromList(node: NodeContainerDeclaration | NodeContainerGroup): string;
+    getGenerator<GeneratorType extends ICodeGenerator>(name: string): GeneratorType;
 }
 
 export default class CodeGenerator implements ICodeGenerator {
+    public generators = this.getDefaultGenerators();
     private files = new Array<IFileResult>();
     private path = new Array<string>();
     private depth = 0;
@@ -68,9 +76,6 @@ export default class CodeGenerator implements ICodeGenerator {
     private prefixPackage = new Array<string>();
     private containers = new Array<Container>();
     private indentationSize = 4;
-    private generators = {
-        containerGroup: new ContainerGroupGenerator(this)
-    };
     private moduleResolver: ModuleResolver;
     constructor(private nodes: Node[], options: Partial<CodeGeneratorOptions> = {}) {
         if(options.prefixPackage) {
@@ -90,6 +95,13 @@ export default class CodeGenerator implements ICodeGenerator {
             this.indentationSize = options.indentationSize;
         }
         this.moduleResolver = new ModuleResolver(options.moduleAliases || new Map());
+    }
+    public getGenerator<T extends ICodeGenerator = ICodeGenerator>(name: string): T {
+        const gen = this.generators.get(name);
+        if(!gen) {
+            throw new Error(`Generator named ${name} was not found`);
+        }
+        return gen as T;
     }
     public getFiles() {
         return [...this.files];
@@ -180,7 +192,7 @@ export default class CodeGenerator implements ICodeGenerator {
                 break;
             }
             case Syntax.ContainerGroup: {
-                append(this.generators.containerGroup.generate(item));
+                append(this.getGenerator('containerGroup').generate(item));
                 break;
             }
             default:
@@ -442,5 +454,23 @@ export default class CodeGenerator implements ICodeGenerator {
         write('/* tslint:enable */\n');
 
         return valueOf();
+    }
+    private getDefaultGenerators() {
+        const generators = new Map<string, ICodeGenerator>();
+
+        generators.set(
+            'containerGroup',
+            new ContainerGroupGenerator(this)
+        )
+        .set('containerDeclaration', new ContainerDeclarationGenerator(this));
+
+        // Template generators
+        generators
+        .set('templateGenerator::Vector', new VectorCodeGenerator(this))
+        .set('templateGenerator::TypedArray', new TypedArrayCodeGenerator(this))
+        .set('templateGenerator::Optional', new OptionalCodeGenerator(this))
+        .set('templateGenerator::StrictSize', new StrictSizeCodeGenerator(this));
+
+        return generators;
     }
 }

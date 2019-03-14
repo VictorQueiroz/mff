@@ -4,14 +4,12 @@ import ContainerDeclarationGenerator from "./container-declaration-generator";
 import { Syntax } from "../ast-parser/constants";
 
 export default class ContainerGroupGenerator extends CodeGeneratorChild {
-    private generators = {
-        containerDeclarationGenerator: new ContainerDeclarationGenerator(this)
-    };
     public generate(item: NodeContainerGroup): string {
         this.setParentNode(item);
         this.setCurrentNode(item);
         const {write, append, valueOf} = this.cs;
         const interfaceName = `T${this.getInterfaceName(item.name)}`;
+        const containerDeclGenerator = this.getGenerator<ContainerDeclarationGenerator>('containerDeclaration');
         write(
             `export abstract class ${interfaceName} extends DataContainer {\n`,
             () => {
@@ -31,14 +29,14 @@ export default class ContainerGroupGenerator extends CodeGeneratorChild {
                     );
                 }
 
-                append(this.generators.containerDeclarationGenerator.createToplevelDecodeMethod(item));
+                append(containerDeclGenerator.createToplevelDecodeMethod(item));
             },
             '}\n'
         );
 
         for(const node of item.body) {
             if(node.type === Syntax.ContainerDeclaration) {
-                append(this.generators.containerDeclarationGenerator.generate(node));
+                append(containerDeclGenerator.generate(node));
                 continue;
             }
             append(this.processNode(node));

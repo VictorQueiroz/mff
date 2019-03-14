@@ -15,6 +15,10 @@ export default abstract class CodeGeneratorChild implements ICodeGenerator {
 
     }
 
+    public getGenerator<T extends ICodeGenerator = ICodeGenerator>(name: string): T {
+        return this.parent.getGenerator<T>(name);
+    }
+
     public getCurrentNode() {
         return this.parent.getCurrentNode();
     }

@@ -2,12 +2,9 @@ import { NodeContainerDeclaration, Node, NodeContainerParam } from "../ast-parse
 import { Syntax } from "../ast-parser/constants";
 import CodeGeneratorChild from "./code-generator-child";
 import GenericCodeGenerator from "./generic-code-generator";
-import VectorCodeGenerator from "./template-generators/vector-code-generator";
-import TypedArrayCodeGenerator from "./template-generators/typed-array-code-generator";
-import OptionalCodeGenerator from "./template-generators/optional-code-generator";
 import { ITypeCodecOptions } from "./type-code-generator";
 import CodeStream from "./code-stream";
-import StrictSizeCodeGenerator from "./template-generators/strict-size-code-generator";
+import TemplateCodeGenerator from './template-generators/template-code-generator';
 
 /**
  * Responsible for generating container declaration code
@@ -32,8 +29,7 @@ export default class ContainerDeclarationGenerator extends CodeGeneratorChild {
         }
 
         this.createContainerParamsInterface(item);
-
-        append(this.attachComments(item.leadingComments));
+        this.writeContainerClassComments(item);
 
         const interfaceName = this.getInterfaceName(item.name);
         const parentInterfaceName = this.getInterfaceName(parentNode.name);
@@ -255,18 +251,8 @@ export default class ContainerDeclarationGenerator extends CodeGeneratorChild {
                 return contents;
             }
         } else if(paramType.type === Syntax.Template) {
-            if(paramType.name === 'Vector') {
-                return new VectorCodeGenerator(this).getDecodingCode(node, options);
-            } else if(paramType.name === 'TypedArray') {
-                return new TypedArrayCodeGenerator(this).getDecodingCode(node, options);
-            } else if(paramType.name === 'Optional') {
-                return new OptionalCodeGenerator(this).getDecodingCode(node, options);
-            } else if(paramType.name === 'StrictSize') {
-                return new StrictSizeCodeGenerator(this).getDecodingCode(node, options);
-            } else {
-                throw new Error(`Template name ${paramType.name} not supported`);
-            }
-            return '';
+            const typeGenerator = this.getGenerator<TemplateCodeGenerator>(`templateGenerator::${paramType.name}`);
+            return typeGenerator.getDecodingCode(node, options);
         }
         const { assignmentVariable } = options;
         return this.indentCode(
@@ -314,19 +300,16 @@ export default class ContainerDeclarationGenerator extends CodeGeneratorChild {
                 return contents;
             }
         } else if(paramType.type === Syntax.Template) {
-            if(paramType.name === 'Vector') {
-                return new VectorCodeGenerator(this).getEncodingCode(node, options);
-            } else if(paramType.name === 'TypedArray') {
-                return new TypedArrayCodeGenerator(this).getEncodingCode(undefined, options);
-            } else if(paramType.name === 'Optional') {
-                return new OptionalCodeGenerator(this).getEncodingCode(node, options);
-            } else if(paramType.name === 'StrictSize') {
-                return new StrictSizeCodeGenerator(this).getEncodingCode(node, options);
-            } else {
-                throw new Error(`Template name ${paramType.name} not supported`);
-            }
+            const typeGenerator = this.getGenerator<TemplateCodeGenerator>(
+                `templateGenerator::${paramType.name}`
+            );
+            return typeGenerator.getEncodingCode(node, options);
         }
         write(`${assignmentVariable}.encode(serializer);\n`);
         return valueOf();
+    }
+    private writeContainerClassComments(item: NodeContainerDeclaration) {
+        const {append} = this.cs;
+        append(this.attachComments(item.leadingComments));
     }
 }
