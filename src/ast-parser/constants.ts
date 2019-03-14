@@ -16,7 +16,9 @@ export enum Syntax {
     LiteralString = 'LiteralString',
     LiteralNumber = 'LiteralNumber',
     MemberExpression = 'MemberExpression',
-    TemplateDeclaration = 'TemplateDeclaration'
+    TemplateDeclaration = 'TemplateDeclaration',
+    SingleLineComment = 'SingleLineComment',
+    MultiLineComment = 'MultiLineComment'
 }
 
 export enum Generics {

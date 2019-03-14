@@ -1,4 +1,4 @@
-import { NodeContainerDeclaration, Node, NodeContainerParam } from "../ast-parser/node";
+import { NodeContainerDeclaration, Node, NodeContainerParam, Comment } from "../ast-parser/node";
 import { Syntax } from "../ast-parser/constants";
 import CodeGeneratorChild from "./code-generator-child";
 import GenericCodeGenerator from "./generic-code-generator";
@@ -78,29 +78,28 @@ export default class ContainerDeclarationGenerator extends CodeGeneratorChild {
 
         return valueOf();
     }
-    public attachComments(comments: string[]): string {
-        if(comments.length) {
-            return comments.reduce((list, comment) => {
-                comment = comment.replace(/[\ ]{2,}/g, ' ').split(/\n+/g).reduce(
-                    (commentsList, item, i, original) => {
-                        if(i === 0) {
-                            item = '/*' + item;
-                        } else if(i === (original.length - 1)) {
-                            item += '*/\n';
+    public attachComments(comments: Comment[]): string {
+        const {write, valueOf} = new CodeStream(this);
+        if(comments.length === 0) return '';
+        for(const comment of comments) {
+            switch(comment.type) {
+                case Syntax.SingleLineComment:
+                    write(`// ${comment.value}\n`);
+                    break;
+                case Syntax.MultiLineComment: {
+                    write(`/**\n`);
+                    const lines = comment.value.split('\n');
+                    for(const line of lines) {
+                        if(!line.trim()) {
+                            continue;
                         }
-                        return commentsList.concat([
-                            this.indentCode(item)
-                        ]);
-                    },
-                    new Array<string>()
-                ).join('\n');
-                if(comment[0] === '*') {
-                    comment = ' ' + comment;
+                        write(` ${line.replace(/^(\ )+/, '')}\n`);
+                    }
+                    write(' */\n');
                 }
-                return list.concat([comment]);
-            }, new Array<string>()).join('\n');
+            }
         }
-        return '';
+        return valueOf();
     }
     public createCopyStatements(item: NodeContainerDeclaration): string {
         const {write, valueOf} = new CodeStream(this);
@@ -310,6 +309,9 @@ export default class ContainerDeclarationGenerator extends CodeGeneratorChild {
     }
     private writeContainerClassComments(item: NodeContainerDeclaration) {
         const {append} = this.cs;
+        if(!item.leadingComments.length) {
+            return;
+        }
         append(this.attachComments(item.leadingComments));
     }
 }

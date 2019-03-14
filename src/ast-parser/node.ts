@@ -7,10 +7,15 @@ export interface NodeRange {
     readonly endLineNumber: number;
 }
 
+export interface Comment {
+    readonly type: Syntax.SingleLineComment | Syntax.MultiLineComment;
+    readonly value: string;
+}
+
 export interface NodeBase {
     readonly range: NodeRange;
-    readonly leadingComments: string[];
-    readonly trailingComments: string[];
+    readonly leadingComments: Comment[];
+    readonly trailingComments: Comment[];
 }
 
 export interface NodeIdentifier extends NodeBase {
