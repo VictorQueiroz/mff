@@ -1,6 +1,7 @@
-import TypeCodeGenerator, { ITypeCodecOptions } from "../type-code-generator";
+import { ITypeCodecOptions } from "../type-code-generator";
+import TemplateCodeGenerator from './template-code-generator';
 
-export default class TypedArrayCodeGenerator extends TypeCodeGenerator<any> {
+export default class TypedArrayCodeGenerator extends TemplateCodeGenerator {
     public getDecodingCode(_: any, options: ITypeCodecOptions) {
         const {valueOf, write} = this.cs;
         write(

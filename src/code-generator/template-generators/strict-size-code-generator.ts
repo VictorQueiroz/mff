@@ -1,9 +1,9 @@
-import TypeCodeGenerator, { ITypeCodecOptions } from "../type-code-generator";
+import { ITypeCodecOptions } from "../type-code-generator";
 import { NodeContainerParam, NodeTemplate } from "../../ast-parser/node";
-import ContainerDeclarationGenerator from "../container-declaration-generator";
 import { Syntax, Generics } from "../../ast-parser/constants";
+import TemplateCodeGenerator from './template-code-generator';
 
-export default class StrictSizeCodeGenerator extends TypeCodeGenerator<NodeContainerParam> {
+export default class StrictSizeCodeGenerator extends TemplateCodeGenerator {
     public getDecodingCode(node: NodeContainerParam, options: ITypeCodecOptions) {
         const {valueOf, append} = this.cs;
         const {paramType} = node;
@@ -11,7 +11,7 @@ export default class StrictSizeCodeGenerator extends TypeCodeGenerator<NodeConta
             throw new Error('Received invalid param type');
         }
         const [firstArgument] = paramType.arguments;
-        append(new ContainerDeclarationGenerator(this).createParamDecodingStatement({
+        append(this.getContainerDeclarationGenerator().createParamDecodingStatement({
             ...node,
             paramType: firstArgument
         }, options));
@@ -25,7 +25,7 @@ export default class StrictSizeCodeGenerator extends TypeCodeGenerator<NodeConta
             throw new Error('Invalid param type');
         }
         this.createValidationCode(node, paramType, options);
-        append(new ContainerDeclarationGenerator(this).createParamEncodingStatement({
+        append(this.getContainerDeclarationGenerator().createParamEncodingStatement({
             ...node,
             paramType: paramType.arguments[0]
         }, options));

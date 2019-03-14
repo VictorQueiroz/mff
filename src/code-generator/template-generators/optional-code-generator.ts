@@ -1,17 +1,18 @@
-import TypeCodeGenerator, { ITypeCodecOptions } from "../type-code-generator";
+import { ITypeCodecOptions } from "../type-code-generator";
 import { NodeContainerParam } from "../../ast-parser/node";
-import ContainerDeclarationGenerator from "../container-declaration-generator";
 import { Syntax } from "../../ast-parser/constants";
+import TemplateCodeGenerator from './template-code-generator';
 
-export default class OptionalCodeGenerator extends TypeCodeGenerator<NodeContainerParam> {
+export default class OptionalCodeGenerator extends TemplateCodeGenerator {
     public getDecodingCode(node: NodeContainerParam, options: ITypeCodecOptions) {
         const {valueOf, append, write} = this.cs;
         const {paramType} = node;
         if(paramType.type !== Syntax.Template) {
             throw new Error('Received invalid container param');
         }
+        const containerDeclGenerator = this.getContainerDeclarationGenerator();
         write(`if(deserializer.readUInt8() === 1) {\n`, () => {
-            append(new ContainerDeclarationGenerator(this).createParamDecodingStatement({
+            append(containerDeclGenerator.createParamDecodingStatement({
                 ...node,
                 type: Syntax.ContainerParam,
                 paramType: paramType.arguments[0]
@@ -29,7 +30,7 @@ export default class OptionalCodeGenerator extends TypeCodeGenerator<NodeContain
         write(`const ${constValue} = ${options.assignmentVariable};\n`);
         write(`if(${constValue}) {\n`, () => {
             write('serializer.writeUInt8(1);\n');
-            append(new ContainerDeclarationGenerator(this).createParamEncodingStatement({
+            append(this.getContainerDeclarationGenerator().createParamEncodingStatement({
                 ...paramType,
                 type: Syntax.ContainerParam,
                 paramType: paramType.arguments[0]

@@ -1,9 +1,9 @@
-import TypeCodeGenerator, { ITypeCodecOptions } from "../type-code-generator";
+import { ITypeCodecOptions } from "../type-code-generator";
 import { NodeContainerParam } from "../../ast-parser/node";
 import { Syntax } from "../../ast-parser/constants";
-import ContainerDeclarationGenerator from "../container-declaration-generator";
+import TemplateCodeGenerator from './template-code-generator';
 
-export default class VectorCodeGenerator extends TypeCodeGenerator<NodeContainerParam> {
+export default class VectorCodeGenerator extends TemplateCodeGenerator {
     public getDecodingCode(node: NodeContainerParam, options: ITypeCodecOptions) {
         const {write, valueOf, append} = this.cs;
         const {paramType} = node;
@@ -17,7 +17,7 @@ export default class VectorCodeGenerator extends TypeCodeGenerator<NodeContainer
             `let ${outputVariable}: ${this.translateParamType(paramType.arguments[0])};\n`
         );
         write(`while(${lengthVariable} > 0) {\n`, () => {
-            append(new ContainerDeclarationGenerator(this).createParamDecodingStatement({
+            append(this.getContainerDeclarationGenerator().createParamDecodingStatement({
                 ...node,
                 type: Syntax.ContainerParam,
                 name: node.name,
@@ -39,7 +39,7 @@ export default class VectorCodeGenerator extends TypeCodeGenerator<NodeContainer
         }
         write(`serializer.writeUInt32(${assignmentVariable}.length);\n`);
         write(`for(const item of ${assignmentVariable}) {\n`, () => {
-            append(new ContainerDeclarationGenerator(this).createParamEncodingStatement({
+            append(this.getContainerDeclarationGenerator().createParamEncodingStatement({
                 ...node,
                 type: Syntax.ContainerParam,
                 paramType: paramType.arguments[0]
