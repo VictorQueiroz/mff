@@ -1,7 +1,4 @@
 {
-    "files": [
-        "./typings/index.d.ts"
-    ],
     "include": [
         "./src/**/*.ts"
     ],
