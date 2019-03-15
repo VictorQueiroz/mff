@@ -2,8 +2,7 @@ docs:
 	./node_modules/.bin/typedoc --out docs
 
 release: test
-	./node_modules/.bin/tsc && \
-	cp -rv src/code-generator/templates lib/code-generator
+	npx tsc
 
 coverage:
 	npx nyc --report-dir dist/coverage --reporter html make test
