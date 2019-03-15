@@ -45,8 +45,17 @@ namespace geo {
              * venenatis feugiat magna.
              */
             address {
+                /**
+                 * Address street name
+                 */
                 string streetName;
+                /**
+                 * Address street number
+                 */
                 uint32 streetNumber;
+                /**
+                 * Url
+                 */
                 TURL url;
             }
         }

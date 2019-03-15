@@ -438,8 +438,20 @@ export namespace geo {
                     }
                 }
                 interface IAddressParams {
+                    /**
+                     *
+                     * Address street name
+                     */
                     streetName: string;
+                    /**
+                     *
+                     * Address street number
+                     */
                     streetNumber: number;
+                    /**
+                     *
+                     * Url
+                     */
                     url: TTURL;
                 }
                 /**
@@ -463,8 +475,20 @@ export namespace geo {
                  * venenatis feugiat magna.
                  */
                 export class Address extends TAddress implements IAddressParams {
+                    /**
+                     *
+                     * Address street name
+                     */
                     public readonly streetName: string;
+                    /**
+                     *
+                     * Address street number
+                     */
                     public readonly streetNumber: number;
+                    /**
+                     *
+                     * Url
+                     */
                     public readonly url: TTURL;
                     constructor(params: IAddressParams)
                     {
