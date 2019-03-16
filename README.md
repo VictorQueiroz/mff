@@ -18,6 +18,8 @@ This module comes in two ways:
 
 ### Schema-dependent plain objects
 
+This option should be used if you want to stay away from generating code and want something more compact.
+
 Use a schema (inheritance or plain class from [schema/index.ts](src/schema/index.ts)) and submitting objects that will be transformed into binary or binary that will be transformed into objects. (Pay attention into `getContainerName`, `getContainerParams` and `createObject` methods if you want to understand how these objects are created or how the schema understand them). See usage below:
 
 ```js
@@ -68,13 +70,18 @@ assert.deepEqual(schema.decode(buffer), ['user', {
 }]);
 ```
 
-### Schema-dependent TypeScript classes
+### Automatically-generated TypeScript classes
 
-Code-generated TypeScript classes that are generated using Babel by [CodeGenerator](src/code-generator/index.ts) and can also be submitted to `Schema`.
+This is a second way of using the language in your advantage. The `CodeGenerator` class will generate several TypeScript classes that you can not only use to take advantage of type-safety classes provided by TypeScript language, but also encode, decode and use some immutable utility method available on each class.
 
-This method is going to become *partially obsolete*. We'll withdraw the use of Babel for code generation and remove the necessity of having a schema to process the class instances. Meaning that each class will be able to both encode and decode independently instead of having to rely on a upper schema instance.
+The `CodeGenerator` class will take care of analyzing the AST and generating a compatible code. Remember that all container types are going to become `T${typeName}` and container names are going to have first letter upper cased.
 
 See usage [here](test/code-generator.ts).
+
+### Automatically-generated TypeScript interfaces
+
+```js
+```
 
 ## Building from source
 ```
@@ -82,3 +89,5 @@ git clone https://github.com/VictorQueiroz/mff.git
 cd mff
 git submodule update --init --recursive
 ```
+
+Still don't know what the heck am I talking about? Try the [FAQ](https://github.com/VictorQueiroz/mff/wiki/Frequently-Asked-Questions) article.
