@@ -1,5 +1,5 @@
 docs:
-	./node_modules/.bin/typedoc --out docs
+	npx typedoc --out docs
 
 release: test
 	npx tsc
