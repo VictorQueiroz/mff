@@ -179,13 +179,11 @@ export default class CodeGenerator implements ICodeGenerator {
                 write(`export namespace ${item.name} {\n`, () => {
                     this.setParentNode(item);
                     this.setCurrentNode(item);
-                    this.increaseDepth();
                     this.path.push(item.name);
                     for(const node of item.body) {
                         append(this.processNode(node));
                     }
                     this.path.pop();
-                    this.decreaseDepth();
                     this.setCurrentNode(undefined);
                     this.setParentNode(undefined);
                 }, '}\n');
