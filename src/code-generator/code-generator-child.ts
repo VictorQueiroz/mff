@@ -27,6 +27,10 @@ export default abstract class CodeGeneratorChild implements ICodeGenerator {
         this.parent.setParentNode(node);
     }
 
+    public getModuleResolver() {
+        return this.parent.getModuleResolver();
+    }
+
     public setCurrentNode(node?: Node) {
         this.parent.setCurrentNode(node);
     }

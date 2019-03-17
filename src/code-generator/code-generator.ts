@@ -45,6 +45,7 @@ export interface ICodeGenerator<T = string> {
     decreaseDepth(): void;
     generate(node: Node): T;
     getContainers(): Container[];
+    getModuleResolver(): ModuleResolver;
     getContainer(name: string): Container;
     getNodeListFromParamExpression(node: Node): Node[];
     getInterfaceName(name: string): string;
@@ -95,6 +96,9 @@ export default class CodeGenerator implements ICodeGenerator {
             this.indentationSize = options.indentationSize;
         }
         this.moduleResolver = new ModuleResolver(options.moduleAliases || new Map());
+    }
+    public getModuleResolver() {
+        return this.moduleResolver;
     }
     public getGenerator<T extends ICodeGenerator = ICodeGenerator>(name: string): T {
         const gen = this.generators.get(name);
