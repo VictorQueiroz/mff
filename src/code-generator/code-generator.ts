@@ -444,12 +444,13 @@ export default class CodeGenerator implements ICodeGenerator {
         write('/* tslint:disable */\n');
 
         append(this.getGenerator<ImportsDeclarationCodeGenerator>('importsDeclaration').generate());
-        append(new UtilClassCodeGenerator(this).generate());
-        append(new DataContainerCodeGenerator(this).generate());
+        append(this.getGenerator<UtilClassCodeGenerator>('utilClass').generate());
+        append(this.getGenerator<DataContainerCodeGenerator>('dataContainer').generate());
 
         for(const node of this.nodes) {
             append(this.processNode(node));
         }
+
         write('/* tslint:enable */\n');
 
         return valueOf();
@@ -457,12 +458,11 @@ export default class CodeGenerator implements ICodeGenerator {
     private getDefaultGenerators() {
         const generators = new Map<string, ICodeGenerator>();
 
-        generators.set(
-            'containerGroup',
-            new ContainerGroupGenerator(this)
-        )
-        .set('containerDeclaration', new ContainerDeclarationGenerator(this));
+        generators.set('containerGroup', new ContainerGroupGenerator(this))
+        .set('containerDeclaration', new ContainerDeclarationGenerator(this))
+        .set('utilClass', new UtilClassCodeGenerator(this))
         .set('importsDeclaration', new ImportsDeclarationCodeGenerator(this))
+        .set('dataContainer', new DataContainerCodeGenerator(this));
 
         // Template generators
         generators
