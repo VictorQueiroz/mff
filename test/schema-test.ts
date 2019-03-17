@@ -183,7 +183,7 @@ test('it should deal well with slices of current array buffer', () => {
 test('getGenericDefault(): it should find defaults for generic types', () => {
     const values = [{
         type: Generics.Double,
-        value: 0,
+        value: 0
     }, {
         type: Generics.Float,
         value: 0
