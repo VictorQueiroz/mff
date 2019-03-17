@@ -21,10 +21,10 @@ class Schema {
     public templateProcessors: Map<string, TemplateProcessor> = new Map();
 
     constructor(containers: Container[], options?: SchemaOptions) {
-        containers.forEach((container) => {
+        for(const container of containers) {
             this.containers.set(container.name, container);
             this.containersCRC.set(container.id, container);
-        });
+        }
 
         this.templateProcessors.set('StrictSize', new StrictSizeProcessor(this));
         this.templateProcessors.set('Vector', new VectorProcessor(this));
