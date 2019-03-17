@@ -35,57 +35,57 @@ export abstract class DataContainer {
     constructor(private __id: number, private __name: string) {}
 }
 export namespace comment {
-        export abstract class TComment extends DataContainer {
-            public abstract encode(serializer: Serializer): void;
-            public static decode(deserializer: Deserializer): TComment {
+    export abstract class TComment extends DataContainer {
+        public abstract encode(serializer: Serializer): void;
+        public static decode(deserializer: Deserializer): TComment {
+            const id = deserializer.readUInt32();
+            if(id === 0x9139fedd) {
+                return Comment.decode(deserializer, true);
+            }
+            throw new Error(`Expected one of 2436497117 ids but got ${id} instead`);
+        }
+    }
+    interface ICommentParams {
+        text: string;
+    }
+    export class Comment extends TComment implements ICommentParams {
+        public readonly text: string;
+        constructor(params: ICommentParams)
+        {
+            super(2436497117, "comment.comment");
+            this.text = params.text;
+        }
+        public static decode(deserializer: Deserializer, ignoreHeader = true): Comment {
+            if(ignoreHeader !== true) {
                 const id = deserializer.readUInt32();
-                if(id === 0x9139fedd) {
-                    return Comment.decode(deserializer, true);
+                if(2436497117 !== id) {
+                    throw new Error(
+                        `Invalid container id: Expected 2436497117 but received ${id} instead.`
+                    );
                 }
-                throw new Error(`Expected one of 2436497117 ids but got ${id} instead`);
             }
+            let v_3638045649 /* text */: string = '';
+            v_3638045649 /* text */ = deserializer.readBuffer(deserializer.readUInt32()).toString('utf8');
+            return new Comment({
+                "text": v_3638045649 /* text */
+            });
         }
-        interface ICommentParams {
-            text: string;
+        public encode(serializer: Serializer, ignoreHeader = true): void {
+            if(ignoreHeader != true) serializer.writeUInt32(2436497117);
+            serializer.writeString(this.text);
         }
-        export class Comment extends TComment implements ICommentParams {
-            public readonly text: string;
-            constructor(params: ICommentParams)
-            {
-                super(2436497117, "comment.comment");
-                this.text = params.text;
-            }
-            public static decode(deserializer: Deserializer, ignoreHeader = true): Comment {
-                if(ignoreHeader !== true) {
-                    const id = deserializer.readUInt32();
-                    if(2436497117 !== id) {
-                        throw new Error(
-                            `Invalid container id: Expected 2436497117 but received ${id} instead.`
-                        );
-                    }
-                }
-                let v_3638045649 /* text */: string = '';
-                v_3638045649 /* text */ = deserializer.readBuffer(deserializer.readUInt32()).toString('utf8');
+        public copy(params: Partial<ICommentParams>): Comment {
+            let changed = false;
+            if(!changed && this.text !== params.text) changed = true;
+            if(changed) {
                 return new Comment({
-                    "text": v_3638045649 /* text */
+                    ...this,
+                    ...params
                 });
             }
-            public encode(serializer: Serializer, ignoreHeader = true): void {
-                if(ignoreHeader != true) serializer.writeUInt32(2436497117);
-                serializer.writeString(this.text);
-            }
-            public copy(params: Partial<ICommentParams>): Comment {
-                let changed = false;
-                if(!changed && this.text !== params.text) changed = true;
-                if(changed) {
-                    return new Comment({
-                        ...this,
-                        ...params
-                    });
-                }
-                return this;
-            }
+            return this;
         }
+    }
 }
 export abstract class TPost extends DataContainer {
     public abstract encode(serializer: Serializer): void;
@@ -229,9 +229,9 @@ export class User extends TUser implements IUserParams {
         const v_89370520 = this.id;
         if(v_89370520) {
             serializer.writeUInt8(1);
-            const v_2266915407 /* v_89370520 */ = v_89370520;
-            serializer.writeUInt32(v_2266915407 /* v_89370520 */.length);
-            serializer.writeBuffer(v_2266915407 /* v_89370520 */);
+            const v_41050946 /* v_89370520 */ = v_89370520;
+            serializer.writeUInt32(v_41050946 /* v_89370520 */.length);
+            serializer.writeBuffer(v_41050946 /* v_89370520 */);
         }
         else 
         {
@@ -306,9 +306,9 @@ export class Msg extends TMsg implements IMsgParams {
     }
     public encode(serializer: Serializer, ignoreHeader = true): void {
         if(ignoreHeader != true) serializer.writeUInt32(2407572624);
-        const v_2507323963 /* this.body */ = this.body;
-        serializer.writeUInt32(v_2507323963 /* this.body */.length);
-        serializer.writeBuffer(v_2507323963 /* this.body */);
+        const v_548224514 /* this.body */ = this.body;
+        serializer.writeUInt32(v_548224514 /* this.body */.length);
+        serializer.writeBuffer(v_548224514 /* this.body */);
     }
     public copy(params: Partial<IMsgParams>): Msg {
         let changed = false;
@@ -323,102 +323,214 @@ export class Msg extends TMsg implements IMsgParams {
     }
 }
 export namespace geo {
-        export abstract class TTURL extends DataContainer {
-            public abstract encode(serializer: Serializer): void;
-            public static decode(deserializer: Deserializer): TTURL {
+    export abstract class TTURL extends DataContainer {
+        public abstract encode(serializer: Serializer): void;
+        public static decode(deserializer: Deserializer): TTURL {
+            const id = deserializer.readUInt32();
+            if(id === 0xab01d5d4) {
+                return URL.decode(deserializer, true);
+            }
+            if(id === 0x9432f5e) {
+                return URLComplex.decode(deserializer, true);
+            }
+            throw new Error(`Expected one of 2869024212 / 155397982 ids but got ${id} instead`);
+        }
+    }
+    interface IURLParams {
+        href: string;
+    }
+    export class URL extends TTURL implements IURLParams {
+        public readonly href: string;
+        constructor(params: IURLParams)
+        {
+            super(2869024212, "geo.URL");
+            this.href = params.href;
+        }
+        public static decode(deserializer: Deserializer, ignoreHeader = true): URL {
+            if(ignoreHeader !== true) {
                 const id = deserializer.readUInt32();
-                if(id === 0xab01d5d4) {
-                    return URL.decode(deserializer, true);
+                if(2869024212 !== id) {
+                    throw new Error(
+                        `Invalid container id: Expected 2869024212 but received ${id} instead.`
+                    );
                 }
-                if(id === 0x9432f5e) {
-                    return URLComplex.decode(deserializer, true);
-                }
-                throw new Error(`Expected one of 2869024212 / 155397982 ids but got ${id} instead`);
             }
+            let v_1226681949 /* href */: string = '';
+            v_1226681949 /* href */ = deserializer.readBuffer(deserializer.readUInt32()).toString('utf8');
+            return new URL({
+                "href": v_1226681949 /* href */
+            });
         }
-        interface IURLParams {
-            href: string;
+        public encode(serializer: Serializer, ignoreHeader = true): void {
+            if(ignoreHeader != true) serializer.writeUInt32(2869024212);
+            serializer.writeString(this.href);
         }
-        export class URL extends TTURL implements IURLParams {
-            public readonly href: string;
-            constructor(params: IURLParams)
-            {
-                super(2869024212, "geo.URL");
-                this.href = params.href;
-            }
-            public static decode(deserializer: Deserializer, ignoreHeader = true): URL {
-                if(ignoreHeader !== true) {
-                    const id = deserializer.readUInt32();
-                    if(2869024212 !== id) {
-                        throw new Error(
-                            `Invalid container id: Expected 2869024212 but received ${id} instead.`
-                        );
-                    }
-                }
-                let v_1226681949 /* href */: string = '';
-                v_1226681949 /* href */ = deserializer.readBuffer(deserializer.readUInt32()).toString('utf8');
+        public copy(params: Partial<IURLParams>): URL {
+            let changed = false;
+            if(!changed && this.href !== params.href) changed = true;
+            if(changed) {
                 return new URL({
-                    "href": v_1226681949 /* href */
+                    ...this,
+                    ...params
                 });
             }
-            public encode(serializer: Serializer, ignoreHeader = true): void {
-                if(ignoreHeader != true) serializer.writeUInt32(2869024212);
-                serializer.writeString(this.href);
-            }
-            public copy(params: Partial<IURLParams>): URL {
-                let changed = false;
-                if(!changed && this.href !== params.href) changed = true;
-                if(changed) {
-                    return new URL({
-                        ...this,
-                        ...params
-                    });
+            return this;
+        }
+    }
+    interface IURLComplexParams {
+        protocol: string;
+        port: number;
+    }
+    export class URLComplex extends TTURL implements IURLComplexParams {
+        public readonly protocol: string;
+        public readonly port: number;
+        constructor(params: IURLComplexParams)
+        {
+            super(155397982, "geo.URLComplex");
+            this.protocol = params.protocol;
+            this.port = params.port;
+        }
+        public static decode(deserializer: Deserializer, ignoreHeader = true): URLComplex {
+            if(ignoreHeader !== true) {
+                const id = deserializer.readUInt32();
+                if(155397982 !== id) {
+                    throw new Error(
+                        `Invalid container id: Expected 155397982 but received ${id} instead.`
+                    );
                 }
-                return this;
+            }
+            let v_1358725288 /* protocol */: string = '';
+            let v_3433894430 /* port */: number;
+            v_1358725288 /* protocol */ = deserializer.readBuffer(deserializer.readUInt32()).toString('utf8');
+            v_3433894430 /* port */ = deserializer.readUInt16();
+            return new URLComplex({
+                "protocol": v_1358725288 /* protocol */,
+                "port": v_3433894430 /* port */
+            });
+        }
+        public encode(serializer: Serializer, ignoreHeader = true): void {
+            if(ignoreHeader != true) serializer.writeUInt32(155397982);
+            serializer.writeString(this.protocol);
+            serializer.writeUInt16(this.port);
+        }
+        public copy(params: Partial<IURLComplexParams>): URLComplex {
+            let changed = false;
+            if(!changed && this.protocol !== params.protocol) changed = true;
+            if(!changed && this.port !== params.port) changed = true;
+            if(changed) {
+                return new URLComplex({
+                    ...this,
+                    ...params
+                });
+            }
+            return this;
+        }
+    }
+    export namespace data {
+        export abstract class TAddress extends DataContainer {
+            public abstract encode(serializer: Serializer): void;
+            public static decode(deserializer: Deserializer): TAddress {
+                const id = deserializer.readUInt32();
+                if(id === 0x6c2f09a) {
+                    return Address.decode(deserializer, true);
+                }
+                throw new Error(`Expected one of 113438874 ids but got ${id} instead`);
             }
         }
-        interface IURLComplexParams {
-            protocol: string;
-            port: number;
+        interface IAddressParams {
+            /**
+             *
+             * Address street name
+             */
+            streetName: string;
+            /**
+             *
+             * Address street number
+             */
+            streetNumber: number;
+            /**
+             *
+             * Url
+             */
+            url: TTURL;
         }
-        export class URLComplex extends TTURL implements IURLComplexParams {
-            public readonly protocol: string;
-            public readonly port: number;
-            constructor(params: IURLComplexParams)
+        /**
+         *
+         * Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla dolor ligula, porttitor
+         * non semper nec, ornare eget mauris. Cras posuere purus elit, non ultricies nisi convallis
+         * quis. Ut vitae nunc magna. Cras in tortor non ex tincidunt vestibulum. Nullam sit amet rutrum
+         * velit, nec dictum enim. Proin commodo sollicitudin sollicitudin. Integer ultrices nisl turpis,
+         * ut vehicula nunc ultricies ac. Ut ultrices blandit est et euismod. Donec eget placerat nisi,
+         * ut varius nibh. Nulla ut velit quis dui suscipit tempus. Praesent eleifend luctus augue, id
+         * volutpat lorem aliquet vel.
+         *
+         * Phasellus egestas auctor massa eget viverra. Nulla consectetur elementum nulla et condimentum.
+         * Curabitur eget maximus mauris, vel aliquet nisi. Pellentesque neque tortor, eleifend ac viverra
+         * vitae, faucibus sit amet risus. Fusce et feugiat justo. Nam iaculis vulputate mi non interdum.
+         * Vivamus sed nulla tellus. Suspendisse neque odio, pharetra eget suscipit nec, placerat at elit.
+         * Maecenas lobortis erat ac tortor sodales, et cursus est venenatis. Vivamus sed orci ac diam
+         * convallis accumsan. Mauris pretium leo eu lorem consequat dapibus. Duis quam ante, pretium vel
+         * erat ut, porta commodo nibh. Sed accumsan neque mi, eu scelerisque nulla ornare in. Sed pretium
+         * augue tortor, ut auctor arcu gravida eget. Aliquam urna nunc, ultrices eget interdum sed,
+         * venenatis feugiat magna.
+         */
+        export class Address extends TAddress implements IAddressParams {
+            /**
+             *
+             * Address street name
+             */
+            public readonly streetName: string;
+            /**
+             *
+             * Address street number
+             */
+            public readonly streetNumber: number;
+            /**
+             *
+             * Url
+             */
+            public readonly url: TTURL;
+            constructor(params: IAddressParams)
             {
-                super(155397982, "geo.URLComplex");
-                this.protocol = params.protocol;
-                this.port = params.port;
+                super(113438874, "geo.data.address");
+                this.streetName = params.streetName;
+                this.streetNumber = params.streetNumber;
+                this.url = params.url;
             }
-            public static decode(deserializer: Deserializer, ignoreHeader = true): URLComplex {
+            public static decode(deserializer: Deserializer, ignoreHeader = true): Address {
                 if(ignoreHeader !== true) {
                     const id = deserializer.readUInt32();
-                    if(155397982 !== id) {
+                    if(113438874 !== id) {
                         throw new Error(
-                            `Invalid container id: Expected 155397982 but received ${id} instead.`
+                            `Invalid container id: Expected 113438874 but received ${id} instead.`
                         );
                     }
                 }
-                let v_1358725288 /* protocol */: string = '';
-                let v_3433894430 /* port */: number;
-                v_1358725288 /* protocol */ = deserializer.readBuffer(deserializer.readUInt32()).toString('utf8');
-                v_3433894430 /* port */ = deserializer.readUInt16();
-                return new URLComplex({
-                    "protocol": v_1358725288 /* protocol */,
-                    "port": v_3433894430 /* port */
+                let v_3762068692 /* streetName */: string = '';
+                let v_2717333464 /* streetNumber */: number = 0;
+                let v_2790903919 /* url */: TTURL;
+                v_3762068692 /* streetName */ = deserializer.readBuffer(deserializer.readUInt32()).toString('utf8');
+                v_2717333464 /* streetNumber */ = deserializer.readUInt32();
+                v_2790903919 /* url */ = TTURL.decode(deserializer);
+                return new Address({
+                    "streetName": v_3762068692 /* streetName */,
+                    "streetNumber": v_2717333464 /* streetNumber */,
+                    "url": v_2790903919 /* url */
                 });
             }
             public encode(serializer: Serializer, ignoreHeader = true): void {
-                if(ignoreHeader != true) serializer.writeUInt32(155397982);
-                serializer.writeString(this.protocol);
-                serializer.writeUInt16(this.port);
+                if(ignoreHeader != true) serializer.writeUInt32(113438874);
+                serializer.writeString(this.streetName);
+                serializer.writeUInt32(this.streetNumber);
+                this.url.encode(serializer);
             }
-            public copy(params: Partial<IURLComplexParams>): URLComplex {
+            public copy(params: Partial<IAddressParams>): Address {
                 let changed = false;
-                if(!changed && this.protocol !== params.protocol) changed = true;
-                if(!changed && this.port !== params.port) changed = true;
+                if(!changed && this.streetName !== params.streetName) changed = true;
+                if(!changed && this.streetNumber !== params.streetNumber) changed = true;
+                if(!changed && this.url !== params.url) changed = true;
                 if(changed) {
-                    return new URLComplex({
+                    return new Address({
                         ...this,
                         ...params
                     });
@@ -426,118 +538,6 @@ export namespace geo {
                 return this;
             }
         }
-        export namespace data {
-                export abstract class TAddress extends DataContainer {
-                    public abstract encode(serializer: Serializer): void;
-                    public static decode(deserializer: Deserializer): TAddress {
-                        const id = deserializer.readUInt32();
-                        if(id === 0x6c2f09a) {
-                            return Address.decode(deserializer, true);
-                        }
-                        throw new Error(`Expected one of 113438874 ids but got ${id} instead`);
-                    }
-                }
-                interface IAddressParams {
-                    /**
-                     *
-                     * Address street name
-                     */
-                    streetName: string;
-                    /**
-                     *
-                     * Address street number
-                     */
-                    streetNumber: number;
-                    /**
-                     *
-                     * Url
-                     */
-                    url: TTURL;
-                }
-                /**
-                 *
-                 * Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla dolor ligula, porttitor
-                 * non semper nec, ornare eget mauris. Cras posuere purus elit, non ultricies nisi convallis
-                 * quis. Ut vitae nunc magna. Cras in tortor non ex tincidunt vestibulum. Nullam sit amet rutrum
-                 * velit, nec dictum enim. Proin commodo sollicitudin sollicitudin. Integer ultrices nisl turpis,
-                 * ut vehicula nunc ultricies ac. Ut ultrices blandit est et euismod. Donec eget placerat nisi,
-                 * ut varius nibh. Nulla ut velit quis dui suscipit tempus. Praesent eleifend luctus augue, id
-                 * volutpat lorem aliquet vel.
-                 *
-                 * Phasellus egestas auctor massa eget viverra. Nulla consectetur elementum nulla et condimentum.
-                 * Curabitur eget maximus mauris, vel aliquet nisi. Pellentesque neque tortor, eleifend ac viverra
-                 * vitae, faucibus sit amet risus. Fusce et feugiat justo. Nam iaculis vulputate mi non interdum.
-                 * Vivamus sed nulla tellus. Suspendisse neque odio, pharetra eget suscipit nec, placerat at elit.
-                 * Maecenas lobortis erat ac tortor sodales, et cursus est venenatis. Vivamus sed orci ac diam
-                 * convallis accumsan. Mauris pretium leo eu lorem consequat dapibus. Duis quam ante, pretium vel
-                 * erat ut, porta commodo nibh. Sed accumsan neque mi, eu scelerisque nulla ornare in. Sed pretium
-                 * augue tortor, ut auctor arcu gravida eget. Aliquam urna nunc, ultrices eget interdum sed,
-                 * venenatis feugiat magna.
-                 */
-                export class Address extends TAddress implements IAddressParams {
-                    /**
-                     *
-                     * Address street name
-                     */
-                    public readonly streetName: string;
-                    /**
-                     *
-                     * Address street number
-                     */
-                    public readonly streetNumber: number;
-                    /**
-                     *
-                     * Url
-                     */
-                    public readonly url: TTURL;
-                    constructor(params: IAddressParams)
-                    {
-                        super(113438874, "geo.data.address");
-                        this.streetName = params.streetName;
-                        this.streetNumber = params.streetNumber;
-                        this.url = params.url;
-                    }
-                    public static decode(deserializer: Deserializer, ignoreHeader = true): Address {
-                        if(ignoreHeader !== true) {
-                            const id = deserializer.readUInt32();
-                            if(113438874 !== id) {
-                                throw new Error(
-                                    `Invalid container id: Expected 113438874 but received ${id} instead.`
-                                );
-                            }
-                        }
-                        let v_3762068692 /* streetName */: string = '';
-                        let v_2717333464 /* streetNumber */: number = 0;
-                        let v_2790903919 /* url */: TTURL;
-                        v_3762068692 /* streetName */ = deserializer.readBuffer(deserializer.readUInt32()).toString('utf8');
-                        v_2717333464 /* streetNumber */ = deserializer.readUInt32();
-                        v_2790903919 /* url */ = TTURL.decode(deserializer);
-                        return new Address({
-                            "streetName": v_3762068692 /* streetName */,
-                            "streetNumber": v_2717333464 /* streetNumber */,
-                            "url": v_2790903919 /* url */
-                        });
-                    }
-                    public encode(serializer: Serializer, ignoreHeader = true): void {
-                        if(ignoreHeader != true) serializer.writeUInt32(113438874);
-                        serializer.writeString(this.streetName);
-                        serializer.writeUInt32(this.streetNumber);
-                        this.url.encode(serializer);
-                    }
-                    public copy(params: Partial<IAddressParams>): Address {
-                        let changed = false;
-                        if(!changed && this.streetName !== params.streetName) changed = true;
-                        if(!changed && this.streetNumber !== params.streetNumber) changed = true;
-                        if(!changed && this.url !== params.url) changed = true;
-                        if(changed) {
-                            return new Address({
-                                ...this,
-                                ...params
-                            });
-                        }
-                        return this;
-                    }
-                }
-        }
+    }
 }
 /* tslint:enable */
