@@ -21,6 +21,7 @@ import VectorCodeGenerator from './template-generators/vector-code-generator';
 import TypedArrayCodeGenerator from './template-generators/typed-array-code-generator';
 import OptionalCodeGenerator from './template-generators/optional-code-generator';
 import StrictSizeCodeGenerator from './template-generators/strict-size-code-generator';
+import ImportsDeclarationCodeGenerator from './imports-declaration-code-generator';
 
 export interface IFileResult {
     path: string;
@@ -442,11 +443,7 @@ export default class CodeGenerator implements ICodeGenerator {
 
         write('/* tslint:disable */\n');
 
-        [
-            `import Long from '${this.moduleResolver.resolve('long')}';\n`,
-            `import { Serializer, Deserializer } from '${this.moduleResolver.resolve('message-ff')}';\n`
-        ].map((text) => write(text));
-
+        append(this.getGenerator<ImportsDeclarationCodeGenerator>('importsDeclaration').generate());
         append(new UtilClassCodeGenerator(this).generate());
         append(new DataContainerCodeGenerator(this).generate());
 
@@ -465,6 +462,7 @@ export default class CodeGenerator implements ICodeGenerator {
             new ContainerGroupGenerator(this)
         )
         .set('containerDeclaration', new ContainerDeclarationGenerator(this));
+        .set('importsDeclaration', new ImportsDeclarationCodeGenerator(this))
 
         // Template generators
         generators
