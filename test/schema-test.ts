@@ -1,10 +1,19 @@
-import Schema from '../src/schema';
+import SchemaDefault from '../src/schema';
 import * as assert from 'assert';
 import * as crypto from 'crypto';
 import { parse } from './utilities';
 import { Generics } from '../src/ast-parser/constants';
 import { test } from 'sarg';
 import Long from 'long';
+
+class Schema extends SchemaDefault {
+    public getContainerName(result: any) {
+        return result[0];
+    }
+    public getContainerParams(result: any) {
+        return result[1];
+    }
+}
 
 const containers = parse(`
     import "schema.txt";

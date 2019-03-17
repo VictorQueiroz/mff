@@ -125,11 +125,11 @@ class Schema {
      * Generally defined as [$container_name, $params]
      */
     public getContainerName(value: any): string {
-        return value[0];
+        return value._name;
     }
 
     public getContainerParams(value: any): any {
-        return value[1];
+        return {...value};
     }
 
     public createObject(container: Container, params: any): any {
