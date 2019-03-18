@@ -2,7 +2,7 @@ import "post.txt";
 
 alias Uint8 = uint8;
 alias Buffer = TypedArray<Uint8>;
-alias ObjectId = Optional<StrictSize<Buffer, 12>>;
+alias ObjectId = Optional<Buffer>;
 
 type User {
     user {
@@ -25,9 +25,37 @@ namespace geo {
     }
     namespace data {
         type Address {
+            /**
+             * Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla dolor ligula, porttitor
+             * non semper nec, ornare eget mauris. Cras posuere purus elit, non ultricies nisi convallis
+             * quis. Ut vitae nunc magna. Cras in tortor non ex tincidunt vestibulum. Nullam sit amet rutrum
+             * velit, nec dictum enim. Proin commodo sollicitudin sollicitudin. Integer ultrices nisl turpis,
+             * ut vehicula nunc ultricies ac. Ut ultrices blandit est et euismod. Donec eget placerat nisi,
+             * ut varius nibh. Nulla ut velit quis dui suscipit tempus. Praesent eleifend luctus augue, id
+             * volutpat lorem aliquet vel.
+             *
+             * Phasellus egestas auctor massa eget viverra. Nulla consectetur elementum nulla et condimentum.
+             * Curabitur eget maximus mauris, vel aliquet nisi. Pellentesque neque tortor, eleifend ac viverra
+             * vitae, faucibus sit amet risus. Fusce et feugiat justo. Nam iaculis vulputate mi non interdum.
+             * Vivamus sed nulla tellus. Suspendisse neque odio, pharetra eget suscipit nec, placerat at elit.
+             * Maecenas lobortis erat ac tortor sodales, et cursus est venenatis. Vivamus sed orci ac diam
+             * convallis accumsan. Mauris pretium leo eu lorem consequat dapibus. Duis quam ante, pretium vel
+             * erat ut, porta commodo nibh. Sed accumsan neque mi, eu scelerisque nulla ornare in. Sed pretium
+             * augue tortor, ut auctor arcu gravida eget. Aliquam urna nunc, ultrices eget interdum sed,
+             * venenatis feugiat magna.
+             */
             address {
+                /**
+                 * Address street name
+                 */
                 string streetName;
+                /**
+                 * Address street number
+                 */
                 uint32 streetNumber;
+                /**
+                 * Url
+                 */
                 TURL url;
             }
         }

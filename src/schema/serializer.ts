@@ -1,9 +1,12 @@
+import Long from 'long';
+
 export default class Serializer {
     private buffer: ArrayBuffer;
     private view: Buffer;
     private offset: number = 0;
+    private memoryGrowthAmount = 1024*4;
 
-    constructor(private length: number = 0xfff) {
+    constructor(private length: number = 1024) {
         this.buffer = new ArrayBuffer(this.length);
         this.view = Buffer.from(this.buffer);
     }
@@ -12,11 +15,11 @@ export default class Serializer {
         return this.view.slice(0, this.offset);
     }
 
-    allocate(length: number) {
+    public allocate(length: number) {
         if((this.offset + length) >= this.length) {
             const { view: oldView } = this;
 
-            this.length += length + 0xfff;
+            this.length += length + this.memoryGrowthAmount;
             this.buffer = new ArrayBuffer(this.length);
             this.view = Buffer.from(this.buffer);
 
@@ -24,7 +27,7 @@ export default class Serializer {
         }
     }
 
-    writeBuffer(source: Buffer) {
+    public writeBuffer(source: Buffer) {
         if(!Buffer.isBuffer(source))
             throw new Error('Argument must be a buffer instance');
 
@@ -35,64 +38,97 @@ export default class Serializer {
         this.offset += length;
     }
 
-    writeBoolean(n: boolean) {
-        if(typeof n != 'boolean')
+    public writeBoolean(n: boolean) {
+        if(typeof n !== 'boolean') {
             throw new Error('Unexpected type for boolean value. It must be native true or false');
+        }
         this.writeUInt8(n ? 1 : 0);
     }
 
-    writeInt8(n: number) {
+    public writeInt8(n: number) {
         this.allocate(1);
         this.view.writeInt8(n, this.offset);
         this.offset++;
     }
 
-    writeUInt8(n: number) {
+    public writeUInt8(n: number) {
         this.allocate(1);
         this.view.writeUInt8(n, this.offset);
         this.offset++;
     }
 
-    writeUInt16(n: number) {
+    public writeUInt16(n: number) {
         this.allocate(2);
         this.view.writeUInt16LE(n, this.offset);
         this.offset += 2;
     }
 
-    writeInt16(n: number) {
+    public writeInt16(n: number) {
         this.allocate(2);
         this.view.writeInt16LE(n, this.offset);
         this.offset += 2;
     }
 
-    writeUInt32(n: number) {
+    public writeUInt32(n: number) {
         this.allocate(4);
         this.view.writeUInt32LE(n, this.offset);
         this.offset += 4;
     }
 
-    writeInt32(n: number) {
+    public writeInt32(n: number) {
         this.allocate(4);
         this.view.writeInt32LE(n, this.offset);
         this.offset += 4;
     }
 
-    writeDouble(n: number) {
+    public writeUInt64(n: Long | number) {
+        let long: Long | undefined;
+        if(typeof n === 'number') {
+            long = new Long(n, 0);
+        } else {
+            long = n;
+        }
+        this.writeLong(long, true);
+    }
+
+    public writeInt64(n: Long | number) {
+        let long: Long | undefined;
+        if(typeof n === 'number') {
+            long = new Long(n, 0);
+        } else {
+            long = n;
+        }
+        this.writeLong(long, false);
+    }
+
+    public writeDouble(n: number) {
         this.allocate(8);
         this.view.writeDoubleLE(n, this.offset);
         this.offset += 8;
     }
 
-    writeFloat(n: number) {
+    public writeFloat(n: number) {
         this.allocate(4);
         this.view.writeFloatLE(n, this.offset);
         this.offset += 4;
     }
 
-    writeString(n: string) {
+    public writeString(n: string) {
         const str = Buffer.from(n, 'utf8');
 
         this.writeUInt32(str.byteLength);
         this.writeBuffer(str);
+    }
+
+    private writeLong(n: Long, unsigned: boolean) {
+        const low = n.low;
+        const high = n.high;
+        if(unsigned) {
+            this.writeUInt32(low);
+            this.writeUInt32(high);
+        } else {
+            this.writeInt32(low);
+            this.writeInt32(high);
+        }
     }
 }

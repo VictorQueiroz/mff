@@ -19,6 +19,8 @@ namespace Btc {
         const char* LiteralNumber = "LiteralNumber";
         const char* MemberExpression = "MemberExpression";
         const char* TemplateDeclaration = "TemplateDeclaration";
+        const char* SingleLineComment = "SingleLineComment";
+        const char* MultiLineComment = "MultiLineComment";
     }
 
     int Ok = BTC_OK;
@@ -169,8 +171,25 @@ void ConvertTemplateDeclaration(btc_template_declaration* item, Local<Object> re
 }
 
 void CopyCommentsList(btc_comments_list* list, Local<Array> out) {
+    btc_comment* comment = nullptr;
+    Local<String> comment_type;
     vector_foreach(list, i) {
-        out->Set(i, Nan::New<String>(btc_comments_list_get(list, i)->value).ToLocalChecked());
+        comment = btc_comments_list_get(list, i);
+        if(comment->token_type == BTC_TOKEN_MULTI_LINE_COMMENT) {
+            comment_type = Nan::New<String>(Btc::Syntax::MultiLineComment).ToLocalChecked();
+        } else if(comment->token_type == BTC_TOKEN_SINGLE_LINE_COMMENT) {
+            comment_type = Nan::New<String>(Btc::Syntax::SingleLineComment).ToLocalChecked();
+        } else {
+            char error[128];
+            sprintf(error, "Unhandled ast item: %d\n", comment->token_type);
+            fprintf(stderr, error);
+            Nan::ThrowError(error);
+            break;
+        }
+        Local<Object> object = Nan::New<Object>();
+        object->Set(Nan::New<String>("type").ToLocalChecked(), comment_type);
+        object->Set(Nan::New<String>("value").ToLocalChecked(), Nan::New<String>(comment->value).ToLocalChecked());
+        out->Set(i, object);
     }
 }
 

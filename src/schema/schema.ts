@@ -9,21 +9,22 @@ import VectorProcessor from './vector-processor';
 import OptionalProcessor from './optional-processor';
 import TypedArrayProcessor from './typed-array-processor';
 import MapProcessor from './map-processor';
+import Long from 'long';
 
 export interface SchemaOptions {
     templateProcessors?: Map<string, TemplateProcessor>;
 }
 
 class Schema {
-    containers: Map<string, Container> = new Map();
-    containersCRC: Map<number, Container> = new Map();
-    templateProcessors: Map<string, TemplateProcessor> = new Map();
+    public containers: Map<string, Container> = new Map();
+    public containersCRC: Map<number, Container> = new Map();
+    public templateProcessors: Map<string, TemplateProcessor> = new Map();
 
     constructor(containers: Container[], options?: SchemaOptions) {
-        containers.forEach(container => {
+        for(const container of containers) {
             this.containers.set(container.name, container);
             this.containersCRC.set(container.id, container);
-        });
+        }
 
         this.templateProcessors.set('StrictSize', new StrictSizeProcessor(this));
         this.templateProcessors.set('Vector', new VectorProcessor(this));
@@ -45,7 +46,7 @@ class Schema {
         }
     }
 
-    decodeGeneric(des: Deserializer, type: Generics): string | number | boolean {
+    public decodeGeneric(des: Deserializer, type: Generics): string | number | boolean | Long {
         switch(type) {
             case Generics.Double:
                 return des.readDouble();
@@ -63,6 +64,10 @@ class Schema {
                 return des.readInt32();
             case Generics.UInt32:
                 return des.readUInt32();
+            case Generics.Int64:
+                return des.readInt64();
+            case Generics.UInt64:
+                return des.readUInt64();
             case Generics.String:
                 return des.readBuffer(des.readUInt32()).toString('utf8');
             case Generics.Boolean:
@@ -72,7 +77,7 @@ class Schema {
         }
     }
 
-    encodeGeneric(serializer: Serializer, type: string, value: any) {
+    public encodeGeneric(serializer: Serializer, type: string, value: any) {
         switch(type) {
             case Generics.Double:
                 serializer.writeDouble(value);
@@ -104,28 +109,34 @@ class Schema {
             case Generics.Boolean:
                 serializer.writeBoolean(value);
                 break;
+            case Generics.UInt64:
+                serializer.writeUInt64(value);
+                break;
+            case Generics.Int64:
+                serializer.writeInt64(value);
+                break;
             default:
                 throw new Error(`Can't encode generic of "${type}"`);
         }
     }
 
     /**
-     * Get container name from object. 
+     * Get container name from object.
      * Generally defined as [$container_name, $params]
      */
-    getContainerName(value: any): string {
-        return value[0];
+    public getContainerName(value: any): string {
+        return value._name;
     }
 
-    getContainerParams(value: any): any {
-        return value[1];
+    public getContainerParams(value: any): any {
+        return {...value};
     }
 
-    createObject(container: Container, params: any): any {
+    public createObject(container: Container, params: any): any {
         return [container.name, params];
     }
 
-    decodeTemplate(deserializer: Deserializer, template: ParamTemplate, result: any, prop: PropertyType) {
+    public decodeTemplate(deserializer: Deserializer, template: ParamTemplate, result: any, prop: PropertyType) {
         const processor = this.templateProcessors.get(template.name);
 
         if(!processor)
@@ -134,7 +145,7 @@ class Schema {
         processor.decode(deserializer, template.arguments, result, prop);
     }
 
-    decode(deserializer: Buffer | Deserializer): any {
+    public decode(deserializer: Buffer | Deserializer): any {
         if(Buffer.isBuffer(deserializer)) {
             return this.decode(new Deserializer(deserializer));
         }
@@ -159,7 +170,7 @@ class Schema {
         return this.createObject(container, props);
     }
 
-    decodeContainerParam(deserializer: Deserializer, param: Param, result: any, prop: PropertyType): any {
+    public decodeContainerParam(deserializer: Deserializer, param: Param, result: any, prop: PropertyType): any {
         switch(param.type) {
             case Params.Generic: {
                 const decoded = this.decodeGeneric(deserializer, param.name);
@@ -175,7 +186,7 @@ class Schema {
         }
     }
 
-    encodeReference(serializer: Serializer, containers: string[], value: any) {
+    public encodeReference(serializer: Serializer, containers: string[], value: any) {
         const name = this.getContainerName(value);
 
         if(containers.indexOf(name) == -1)
@@ -184,7 +195,7 @@ class Schema {
         this.encode(value, serializer);
     }
 
-    encodeTemplate(serializer: Serializer, param: ParamTemplate, value: any) {
+    public encodeTemplate(serializer: Serializer, param: ParamTemplate, value: any) {
         const processor = this.templateProcessors.get(param.name);
 
         if(!processor)
@@ -196,7 +207,7 @@ class Schema {
     /**
      * Return default value for generics
      */
-    getGenericDefault(value: Generics): any {
+    public getGenericDefault(value: Generics): any {
         switch(value) {
             case Generics.Double:
             case Generics.Float:
@@ -206,6 +217,8 @@ class Schema {
             case Generics.Int8:
             case Generics.Int32:
             case Generics.UInt32:
+            case Generics.Int64:
+            case Generics.UInt64:
                 return 0;
             case Generics.String:
                 return '';
@@ -216,8 +229,14 @@ class Schema {
         throw new Error(`Could not find default value for generic param`);
     }
 
-    validateGeneric(type: Generics, value: any) {
+    public validateGeneric(type: Generics, value: any) {
         switch(type) {
+            case Generics.Int64:
+            case Generics.UInt64:
+                if(!Long.isLong(value) && typeof value !== 'number') {
+                    throw new Error(`Expected Long instance of number but got ${typeof value} instead`);
+                }
+                break;
             case Generics.Double:
             case Generics.Float:
             case Generics.Int16:
@@ -248,7 +267,7 @@ class Schema {
         }
     }
 
-    encodeContainerParam(serializer: Serializer, param: Param, value: any) {
+    public encodeContainerParam(serializer: Serializer, param: Param, value: any) {
         switch(param.type) {
             case Params.Generic:
                 if(typeof value === 'undefined') {

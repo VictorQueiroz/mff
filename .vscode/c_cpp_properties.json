@@ -3,7 +3,8 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "node_modules/nan"
             ],
             "defines": [],
             "compilerPath": "/bin/clang",

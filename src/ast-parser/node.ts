@@ -1,82 +1,87 @@
 import { Syntax } from './constants';
 
 export interface NodeRange {
-    startOffset: number;
-    endOffset: number;
-    startLineNumber: number;
-    endLineNumber: number;
+    readonly startOffset: number;
+    readonly endOffset: number;
+    readonly startLineNumber: number;
+    readonly endLineNumber: number;
+}
+
+export interface Comment {
+    readonly type: Syntax.SingleLineComment | Syntax.MultiLineComment;
+    readonly value: string;
 }
 
 export interface NodeBase {
-    range: NodeRange;
-    leadingComments: string[];
-    trailingComments: string[];
+    readonly range: NodeRange;
+    readonly leadingComments: Comment[];
+    readonly trailingComments: Comment[];
 }
 
 export interface NodeIdentifier extends NodeBase {
-    type: Syntax.Identifier;
-    value: string;
+    readonly type: Syntax.Identifier;
+    readonly value: string;
 }
 
 export interface NodeMemberExpression extends NodeBase {
-    type: Syntax.MemberExpression;
-    left: NodeIdentifier | NodeMemberExpression;
-    right: string;
+    readonly type: Syntax.MemberExpression;
+    readonly left: NodeIdentifier | NodeMemberExpression;
+    readonly right: string;
 }
 
 /**
  * Node representing template expression (i.e. Vector<Vector<A>>)
  */
 export interface NodeTemplate extends NodeBase {
-    type: Syntax.Template;
-    arguments: Node[];
-    name: string;
+    readonly type: Syntax.Template;
+    readonly arguments: Node[];
+    readonly name: string;
 }
 
 export interface NodeContainerParam extends NodeBase {
-    type: Syntax.ContainerParam;
-    paramType: Node;
-    name: string;
+    readonly type: Syntax.ContainerParam;
+    readonly paramType: Node;
+    readonly name: string;
 }
 
 export interface NodeTemplateDeclaration extends NodeBase {
-    type: Syntax.TemplateDeclaration;
-    arguments: Node[];
-    body: Node;
+    readonly type: Syntax.TemplateDeclaration;
+    readonly arguments: Node[];
+    readonly body: Node;
 }
 
 export interface NodeContainerDeclaration extends NodeBase {
-    type: Syntax.ContainerDeclaration;
-    name: string;
-    body: Node[];
+    readonly type: Syntax.ContainerDeclaration;
+    readonly name: string;
+    readonly body: Node[];
 }
 
 export interface NodeImportDeclaration extends NodeBase {
-    type: Syntax.ImportDeclaration;
-    path: string;
+    readonly type: Syntax.ImportDeclaration;
+    readonly path: string;
 }
 
 export interface NodeNamespace extends NodeBase {
-    name: string;
-    type: Syntax.Namespace;
-    body: Node[];
+    readonly name: string;
+    readonly type: Syntax.Namespace;
+    readonly body: Node[];
 }
 
 export interface NodeContainerGroup extends NodeBase {
-    type: Syntax.ContainerGroup;
-    body: Node[];
-    name: string;
+    readonly type: Syntax.ContainerGroup;
+    readonly body: Node[];
+    readonly name: string;
 }
 
 export interface NodeAlias extends NodeBase {
-    type: Syntax.Alias;
-    value: Node;
-    name: string;
+    readonly type: Syntax.Alias;
+    readonly value: Node;
+    readonly name: string;
 }
 
 export interface NodeLiteralNumber extends NodeBase {
-    type: Syntax.LiteralNumber;
-    value: number;
+    readonly type: Syntax.LiteralNumber;
+    readonly value: number;
 }
 
 export type Node = NodeNamespace | NodeIdentifier | NodeTemplate |
