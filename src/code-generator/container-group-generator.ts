@@ -19,7 +19,7 @@ export default class ContainerGroupGenerator extends CodeGeneratorChild {
                     returnType: string;
                 }>({
                     stubMethod: 'encode',
-                    args: ['serializer: Serializer'],
+                    args: ['serializer: Serializer', 'ignoreHeader?: boolean'],
                     returnType: 'void'
                 });
 
