@@ -304,7 +304,7 @@ export default class ContainerDeclarationGenerator extends CodeGeneratorChild {
             );
             return typeGenerator.getEncodingCode(node, options);
         }
-        write(`${assignmentVariable}.encode(serializer);\n`);
+        write(`${assignmentVariable}.encode(serializer, false);\n`);
         return valueOf();
     }
     private writeContainerClassComments(item: NodeContainerDeclaration) {
