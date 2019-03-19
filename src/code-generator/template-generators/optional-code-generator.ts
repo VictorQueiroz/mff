@@ -44,4 +44,7 @@ export default class OptionalCodeGenerator extends TemplateCodeGenerator {
         }, '}\n');
         return valueOf();
     }
+    public getDefaultValueExpression() {
+        return 'undefined';
+    }
 }

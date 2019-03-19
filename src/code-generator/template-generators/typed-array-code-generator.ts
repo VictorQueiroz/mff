@@ -17,4 +17,7 @@ export default class TypedArrayCodeGenerator extends TemplateCodeGenerator {
         write(`serializer.writeBuffer(${byteArrayVariable});\n`);
         return valueOf();
     }
+    public getDefaultValueExpression() {
+        return '';
+    }
 }
