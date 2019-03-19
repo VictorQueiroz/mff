@@ -66,7 +66,7 @@ export default class ContainerDeclarationGenerator extends CodeGeneratorChild {
                     '}\n'
                 );
                 write(
-                    `public copy(params: Partial<I${interfaceName}Params>): ${interfaceName} {\n`,
+                    `public copy(${lastParam ? `params: Partial<I${interfaceName}Params>` : ''}): ${interfaceName} {\n`,
                     () => append(this.createCopyStatements(item)),
                     '}\n'
                 );
@@ -103,19 +103,28 @@ export default class ContainerDeclarationGenerator extends CodeGeneratorChild {
     }
     public createCopyStatements(item: NodeContainerDeclaration): string {
         const {write, valueOf} = new CodeStream(this);
-        write('let changed = false;\n');
+        let lastParam: NodeContainerParam | undefined;
         for(const node of item.body) {
             if(node.type !== Syntax.ContainerParam) {
                 continue;
             }
-            write(`if(!changed && this.${node.name} !== params.${node.name}) changed = true;\n`);
+            lastParam = node;
         }
-        write('if(changed) {\n', () => {
-            write(`return new ${this.getInterfaceName(item.name)}({\n`, () => {
-                write(`...this,\n`);
-                write(`...params\n`);
-            }, `});\n`);
-        }, '}\n');
+        if(lastParam) {
+            write('let changed = false;\n');
+            for(const node of item.body) {
+                if(node.type !== Syntax.ContainerParam) {
+                    continue;
+                }
+                write(`if(!changed && this.${node.name} !== params.${node.name}) changed = true;\n`);
+            }
+            write('if(changed) {\n', () => {
+                write(`return new ${this.getInterfaceName(item.name)}({\n`, () => {
+                    write(`...this,\n`);
+                    write(`...params\n`);
+                }, `});\n`);
+            }, '}\n');
+        }
         write('return this;\n');
         return valueOf();
     }
@@ -205,19 +214,23 @@ export default class ContainerDeclarationGenerator extends CodeGeneratorChild {
             }));
             lastParam = item;
         }
-        write(`return new ${this.getClassNameFromList(node)}({\n`, () => {
-            for(const item of node.body) {
-                if(item.type !== Syntax.ContainerParam) {
-                    continue;
+        if(lastParam) {
+            write(`return new ${this.getClassNameFromList(node)}({\n`, () => {
+                for(const item of node.body) {
+                    if(item.type !== Syntax.ContainerParam) {
+                        continue;
+                    }
+                    write(`\"${item.name}\": ${paramsValues.get(item.name)}`);
+                    if(lastParam !== item) {
+                        append(',\n');
+                    } else {
+                        append('\n');
+                    }
                 }
-                write(`\"${item.name}\": ${paramsValues.get(item.name)}`);
-                if(lastParam !== item) {
-                    append(',\n');
-                } else {
-                    append('\n');
-                }
-            }
-        }, '});\n');
+            }, '});\n');
+        } else {
+            write(`return new ${this.getClassNameFromList(node)}();\n`);
+        }
         return valueOf();
     }
     public createEncodingStatements(item: NodeContainerDeclaration) {
