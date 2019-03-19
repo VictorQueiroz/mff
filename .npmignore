@@ -14,3 +14,4 @@ deps/btc/deps/cvector/.gitmodules
 cmake-build-*/
 .idea/
 .gitmodules
+.nyc_output/
