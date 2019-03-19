@@ -16,6 +16,13 @@ interface Post {
     readonly id: Long;
     readonly comments: Array<comment.TComment>;
 }
+export type TUsersResult = UsersResult;
+interface UsersResult {
+    readonly _id?: 0xc8c23916;
+    readonly _type?: "UsersResult";
+    readonly _name: "usersResult";
+    readonly users: Map<number, TUser>;
+}
 export type TUser = User;
 interface User {
     readonly _id?: 0x449fd2ff;
@@ -50,7 +57,7 @@ export namespace geo {
         readonly port: number;
     }
     export namespace data {
-        export type TAddress = Address;
+        export type TAddress = Address | AddressEmpty;
         interface Address {
             readonly _id?: 0x6c2f09a;
             readonly _type?: "geo.data.Address";
@@ -70,6 +77,11 @@ export namespace geo {
              * Url
              */
             readonly url: TTURL;
+        }
+        interface AddressEmpty {
+            readonly _id?: 0xa65445ed;
+            readonly _type?: "geo.data.Address";
+            readonly _name: "geo.data.addressEmpty";
         }
     }
 }

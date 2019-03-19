@@ -23,6 +23,7 @@ import OptionalCodeGenerator from './template-generators/optional-code-generator
 import StrictSizeCodeGenerator from './template-generators/strict-size-code-generator';
 import ImportsDeclarationCodeGenerator from './imports-declaration-code-generator';
 import TemplateCodeGenerator from './template-generators/template-code-generator';
+import MapCodeGenerator from './template-generators/map-code-generator';
 
 export interface IFileResult {
     path: string;
@@ -372,6 +373,10 @@ export default class CodeGenerator implements ICodeGenerator {
                     return `${this.translateParamType(node.arguments[0])} | undefined`;
                 } else if(node.name === 'StrictSize') {
                     return this.translateParamType(node.arguments[0]);
+                } else if(node.name === 'Map') {
+                    const key = this.translateParamType(node.arguments[0]);
+                    const value = this.translateParamType(node.arguments[1]);
+                    return `Map<${key}, ${value}>`;
                 }
                 throw new Error(`Unsupported template: ${node.name}`);
         }
@@ -462,6 +467,7 @@ export default class CodeGenerator implements ICodeGenerator {
         // Template generators
         generators
         .set('templateGenerator::Vector', new VectorCodeGenerator(this))
+        .set('templateGenerator::Map', new MapCodeGenerator(this))
         .set('templateGenerator::TypedArray', new TypedArrayCodeGenerator(this))
         .set('templateGenerator::Optional', new OptionalCodeGenerator(this))
         .set('templateGenerator::StrictSize', new StrictSizeCodeGenerator(this));
