@@ -22,6 +22,7 @@ import TypedArrayCodeGenerator from './template-generators/typed-array-code-gene
 import OptionalCodeGenerator from './template-generators/optional-code-generator';
 import StrictSizeCodeGenerator from './template-generators/strict-size-code-generator';
 import ImportsDeclarationCodeGenerator from './imports-declaration-code-generator';
+import TemplateCodeGenerator from './template-generators/template-code-generator';
 
 export interface IFileResult {
     path: string;
@@ -160,14 +161,8 @@ export default class CodeGenerator implements ICodeGenerator {
             }
             return '';
         } else if(node.type === Syntax.Template) {
-            if(node.name === 'Vector') {
-                return `new Array<${this.translateParamType(node.arguments[0])}>()`;
-            } else if(node.name === 'TypedArray') {
-                return '';
-            } else if(node.name === 'Optional') {
-                return 'undefined';
-            }
-            throw new Error(`Cannot provide a default value for template named "${node.name}"`);
+            const gen = this.getGenerator<TemplateCodeGenerator>(`templateGenerator::${node.name}`);
+            return gen.getDefaultValueExpression(node);
         }
         return '';
     }

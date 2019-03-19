@@ -1,5 +1,5 @@
 import { ITypeCodecOptions } from "../type-code-generator";
-import { NodeContainerParam } from "../../ast-parser/node";
+import { NodeContainerParam, NodeTemplate } from "../../ast-parser/node";
 import { Syntax } from "../../ast-parser/constants";
 import TemplateCodeGenerator from './template-code-generator';
 
@@ -46,5 +46,8 @@ export default class VectorCodeGenerator extends TemplateCodeGenerator {
             }, { assignmentVariable: 'item' }));
         } ,'}\n');
         return valueOf();
+    }
+    public getDefaultValueExpression(node: NodeTemplate) {
+        return `new Array<${this.translateParamType(node.arguments[0])}>()`;
     }
 }

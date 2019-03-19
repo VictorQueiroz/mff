@@ -4,6 +4,9 @@ import { Syntax, Generics } from "../../ast-parser/constants";
 import TemplateCodeGenerator from './template-code-generator';
 
 export default class StrictSizeCodeGenerator extends TemplateCodeGenerator {
+    public getDefaultValueExpression(node: NodeTemplate) {
+        return this.getParamDefaultFromType(node.arguments[0]);
+    }
     public getDecodingCode(node: NodeContainerParam, options: ITypeCodecOptions) {
         const {valueOf, append} = this.cs;
         const {paramType} = node;
