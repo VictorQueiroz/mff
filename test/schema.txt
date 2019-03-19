@@ -1,4 +1,5 @@
 import "post.txt";
+import "schema-test-map.txt";
 
 alias Uint8 = uint8;
 alias Buffer = TypedArray<Uint8>;
@@ -58,6 +59,7 @@ namespace geo {
                  */
                 TURL url;
             }
+            addressEmpty
         }
     }
 }
