@@ -440,11 +440,10 @@ export default class CodeGenerator implements ICodeGenerator {
         );
     }
     public generate(): string {
-        const {write, append, valueOf} = new CodeStream(this);
+        const {write, append, prepend, valueOf} = new CodeStream(this);
 
         write('/* tslint:disable */\n');
 
-        append(this.getGenerator<ImportsDeclarationCodeGenerator>('importsDeclaration').generate());
         append(this.getGenerator<UtilClassCodeGenerator>('utilClass').generate());
         append(this.getGenerator<DataContainerCodeGenerator>('dataContainer').generate());
 
@@ -452,6 +451,7 @@ export default class CodeGenerator implements ICodeGenerator {
             append(this.processNode(node));
         }
 
+        prepend(this.getGenerator<ImportsDeclarationCodeGenerator>('importsDeclaration').generate());
         write('/* tslint:enable */\n');
 
         return valueOf();
