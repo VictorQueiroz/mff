@@ -17,6 +17,9 @@ export default class CodeStream {
         this.generator.decreaseDepth();
         this.code += this.generator.indentCode(end);
     }
+    public prepend(value: string) {
+        this.code = value + this.code;
+    }
     public append(value: string) {
         this.code += value;
     }
