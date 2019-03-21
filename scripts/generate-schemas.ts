@@ -15,7 +15,10 @@ async function run(): Promise<number> {
         directory: path.resolve(__dirname, '../test')
     });
     const cg = new CodeGenerator(preprocessor.getResult(), {
-        moduleAliases: new Map().set('message-ff', path.resolve(__dirname, '../src'))
+        moduleAliases: new Map().set(
+            'message-ff',
+            path.relative(path.resolve(__dirname, '../test'), path.resolve(__dirname, '../src'))
+        )
     });
     const contents = Buffer.from(cg.generate(), 'utf8');
 
