@@ -54,6 +54,10 @@ export default class ContainerDeclarationGenerator extends CodeGeneratorChild {
                     }
                 }, '}\n');
 
+                this.getModuleResolver().requireImport('message-ff', {
+                    args: ['Serializer', 'Deserializer']
+                });
+
                 /* container body */
                 write(
                     `public static decode(deserializer: Deserializer, ignoreHeader = true): ${interfaceName} {\n`,

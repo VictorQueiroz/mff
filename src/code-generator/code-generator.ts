@@ -327,6 +327,7 @@ export default class CodeGenerator implements ICodeGenerator {
                 } else if(node.value === Generics.UInt16 || node.value === Generics.Int16) {
                     return 'number';
                 } else if(node.value === Generics.UInt64 || node.value === Generics.Int64) {
+                    this.moduleResolver.requireImport('long', 'Long');
                     return 'Long';
                 } else if(node.value === Generics.Boolean) {
                     return 'boolean';
