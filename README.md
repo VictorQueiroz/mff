@@ -14,7 +14,7 @@ The code above declare a single container named `user` which have `id` and `name
 
 ## Usage
 
-This module comes in two ways:
+`message-ff` can be used in several ways, see below:
 
 ### Schema-dependent plain objects
 
@@ -101,8 +101,6 @@ const cg = new CodeGenerator(preprocessor.getResult());
 cg.generators.set('utilClass', new EmptyCodeGenerator(cg));
 // ignore DataContainer class
 cg.generators.set('dataContainer', new EmptyCodeGenerator(cg));
-// ignore message-ff and other imports
-cg.generators.set('importsDeclaration', new EmptyCodeGenerator(cg));
 cg.generators.set('containerDeclaration', new ContainerDeclarationInterfaceGenerator(cg));
 cg.generators.set('containerGroup', new ContainerGroupInterfaceGenerator(cg));
 
