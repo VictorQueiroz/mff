@@ -36,9 +36,10 @@ interface User {
 }
 export type TMsg = Msg;
 interface Msg {
-    readonly _id?: 0x8f80a490;
+    readonly _id?: 0xd3c81697;
     readonly _type?: "Msg";
     readonly _name: "msg";
+    readonly id: Long;
     readonly body: Buffer;
 }
 export namespace geo {

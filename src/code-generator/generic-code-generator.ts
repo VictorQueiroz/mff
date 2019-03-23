@@ -23,6 +23,8 @@ export default class GenericCodeGenerator extends TypeCodeGenerator<NodeIdentifi
             write(`serializer.writeUInt16(${assignmentVariable});\n`);
         } else if(paramType.value === Generics.UInt64) {
             write(`serializer.writeUInt64(${assignmentVariable});\n`);
+        } else if(paramType.value === Generics.Int64) {
+            write(`serializer.writeInt64(${assignmentVariable});\n`);
         }
         return valueOf();
     }
@@ -44,6 +46,8 @@ export default class GenericCodeGenerator extends TypeCodeGenerator<NodeIdentifi
             write(`${assignmentVariable} = deserializer.readUInt16();\n`);
         } else if(paramType.value === Generics.UInt64) {
             write(`${assignmentVariable} = deserializer.readUInt64();\n`);
+        } else if(paramType.value === Generics.Int64) {
+            write(`${assignmentVariable} = deserializer.readInt64();\n`);
         }
         return valueOf();
     }

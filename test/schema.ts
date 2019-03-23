@@ -16,7 +16,7 @@ export class Util {
         if(id === 0x449fd2ff) {
             return User.decode(deserializer, true);
         }
-        if(id === 0x8f80a490) {
+        if(id === 0xd3c81697) {
             return Msg.decode(deserializer, true);
         }
         if(id === 0xab01d5d4) {
@@ -298,9 +298,9 @@ export class User extends TUser implements IUserParams {
         const v_89370520 = this.id;
         if(v_89370520) {
             serializer.writeUInt8(1);
-            const v_2755824426 /* v_89370520 */ = v_89370520;
-            serializer.writeUInt32(v_2755824426 /* v_89370520 */.length);
-            serializer.writeBuffer(v_2755824426 /* v_89370520 */);
+            const v_1768429559 /* v_89370520 */ = v_89370520;
+            serializer.writeUInt32(v_1768429559 /* v_89370520 */.length);
+            serializer.writeBuffer(v_1768429559 /* v_89370520 */);
         }
         else 
         {
@@ -342,45 +342,53 @@ export abstract class TMsg extends DataContainer {
     public abstract encode(serializer: Serializer, ignoreHeader?: boolean): void;
     public static decode(deserializer: Deserializer): TMsg {
         const id = deserializer.readUInt32();
-        if(id === 0x8f80a490) {
+        if(id === 0xd3c81697) {
             return Msg.decode(deserializer, true);
         }
-        throw new Error(`Expected one of 2407572624 ids but got ${id} instead`);
+        throw new Error(`Expected one of 3553105559 ids but got ${id} instead`);
     }
 }
 interface IMsgParams {
+    id: Long;
     body: Buffer;
 }
 export class Msg extends TMsg implements IMsgParams {
+    public readonly id: Long;
     public readonly body: Buffer;
     constructor(params: IMsgParams)
     {
-        super(2407572624, "msg");
+        super(3553105559, "msg");
+        this.id = params.id;
         this.body = params.body;
     }
     public static decode(deserializer: Deserializer, ignoreHeader = true): Msg {
         if(ignoreHeader !== true) {
             const id = deserializer.readUInt32();
-            if(2407572624 !== id) {
+            if(3553105559 !== id) {
                 throw new Error(
-                    `Invalid container id: Expected 2407572624 but received ${id} instead.`
+                    `Invalid container id: Expected 3553105559 but received ${id} instead.`
                 );
             }
         }
+        let v_4274775460 /* id */: Long;
         let v_980539595 /* body */: Buffer;
+        v_4274775460 /* id */ = deserializer.readInt64();
         v_980539595 /* body */ = deserializer.readBuffer(deserializer.readUInt32());
         return new Msg({
+            "id": v_4274775460 /* id */,
             "body": v_980539595 /* body */
         });
     }
     public encode(serializer: Serializer, ignoreHeader = true): void {
-        if(ignoreHeader != true) serializer.writeUInt32(2407572624);
-        const v_2611248447 /* this.body */ = this.body;
-        serializer.writeUInt32(v_2611248447 /* this.body */.length);
-        serializer.writeBuffer(v_2611248447 /* this.body */);
+        if(ignoreHeader != true) serializer.writeUInt32(3553105559);
+        serializer.writeInt64(this.id);
+        const v_221643465 /* this.body */ = this.body;
+        serializer.writeUInt32(v_221643465 /* this.body */.length);
+        serializer.writeBuffer(v_221643465 /* this.body */);
     }
     public copy(params: Partial<IMsgParams>): Msg {
         let changed = false;
+        if(!changed && this.id !== params.id) changed = true;
         if(!changed && this.body !== params.body) changed = true;
         if(changed) {
             return new Msg({

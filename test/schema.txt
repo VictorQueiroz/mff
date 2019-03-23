@@ -16,7 +16,7 @@ type User {
 }
 
 type Msg {
-    msg -> Buffer body
+    msg -> int64 id, Buffer body
 }
 
 namespace geo {
