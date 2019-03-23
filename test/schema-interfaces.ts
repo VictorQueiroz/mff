@@ -1,4 +1,5 @@
 /* tslint:disable */
+import Long from "long";
 export namespace comment {
     export type TComment = Comment;
     interface Comment {

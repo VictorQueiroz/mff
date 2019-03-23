@@ -1,6 +1,6 @@
+/* tslint:disable */
 import { Serializer, Deserializer } from "../src";
 import Long from "long";
-/* tslint:disable */
 export class Util {
     public decode(deserializer: Deserializer): DataContainer {
         const id = deserializer.readUInt32();
@@ -298,9 +298,9 @@ export class User extends TUser implements IUserParams {
         const v_89370520 = this.id;
         if(v_89370520) {
             serializer.writeUInt8(1);
-            const v_1768429559 /* v_89370520 */ = v_89370520;
-            serializer.writeUInt32(v_1768429559 /* v_89370520 */.length);
-            serializer.writeBuffer(v_1768429559 /* v_89370520 */);
+            const v_2263711929 /* v_89370520 */ = v_89370520;
+            serializer.writeUInt32(v_2263711929 /* v_89370520 */.length);
+            serializer.writeBuffer(v_2263711929 /* v_89370520 */);
         }
         else 
         {
@@ -382,9 +382,9 @@ export class Msg extends TMsg implements IMsgParams {
     public encode(serializer: Serializer, ignoreHeader = true): void {
         if(ignoreHeader != true) serializer.writeUInt32(3553105559);
         serializer.writeInt64(this.id);
-        const v_221643465 /* this.body */ = this.body;
-        serializer.writeUInt32(v_221643465 /* this.body */.length);
-        serializer.writeBuffer(v_221643465 /* this.body */);
+        const v_3485804888 /* this.body */ = this.body;
+        serializer.writeUInt32(v_3485804888 /* this.body */.length);
+        serializer.writeBuffer(v_3485804888 /* this.body */);
     }
     public copy(params: Partial<IMsgParams>): Msg {
         let changed = false;

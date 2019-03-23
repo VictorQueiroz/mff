@@ -26,7 +26,6 @@ async function run(): Promise<number> {
 
     cg.generators.set('utilClass', new EmptyCodeGenerator(cg));
     cg.generators.set('dataContainer', new EmptyCodeGenerator(cg));
-    cg.generators.set('importsDeclaration', new EmptyCodeGenerator(cg));
     cg.generators.set('containerDeclaration', new ContainerDeclarationInterfaceGenerator(cg));
     cg.generators.set('containerGroup', new ContainerGroupInterfaceGenerator(cg));
 
