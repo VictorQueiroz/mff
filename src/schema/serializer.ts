@@ -121,14 +121,12 @@ export default class Serializer {
     }
 
     private writeLong(n: Long, unsigned: boolean) {
-        const low = n.low;
-        const high = n.high;
         if(unsigned) {
-            this.writeUInt32(low);
-            this.writeUInt32(high);
+            this.writeUInt32(n.getLowBitsUnsigned());
+            this.writeUInt32(n.getHighBitsUnsigned());
         } else {
-            this.writeInt32(low);
-            this.writeInt32(high);
+            this.writeInt32(n.getLowBits());
+            this.writeInt32(n.getHighBits());
         }
     }
 }

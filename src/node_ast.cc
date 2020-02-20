@@ -267,9 +267,10 @@ NAN_METHOD(Ast::Parse) {
     Btc::Parser* parser = new Btc::Parser();
 
     Local<String> jsText = Nan::To<String>(info[0]).ToLocalChecked();
-    int length = jsText->Utf8Length();
+    Isolate* isolate = Nan::GetCurrentContext()->GetIsolate();
+    int length = jsText->Utf8Length(isolate);
     char* text = (char*)malloc(length + 1);
-    jsText->WriteUtf8(text, length);
+    jsText->WriteUtf8(isolate, text, length);
     text[length] = '\0';
 
     parser->Parse(text);

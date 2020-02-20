@@ -23,7 +23,7 @@ export default class ContainerDeclarationInterfaceGenerator extends ContainerDec
         }
         const container = this.getContainer(node.name);
         const paramPrefix = this.getInterfaceParamPrefix();
-        write(`interface ${this.getClassNameFromList(node)} {\n`, () => {
+        write(`export interface ${this.getClassNameFromList(node)} {\n`, () => {
             write(`${paramPrefix}_id?: 0x${container.id.toString(16)};\n`);
             write(`${paramPrefix}_type?: "${container.type}";\n`);
             write(`${paramPrefix}_name: "${container.name}";\n`);
