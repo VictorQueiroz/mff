@@ -3,7 +3,8 @@
 
 #include <nan.h>
 
-using namespace v8;
+using v8::Local;
+using v8::Object;
 
 class Ast {
 public:

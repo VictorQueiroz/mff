@@ -1,8 +1,13 @@
-#include <btc.h>
 #include "node_ast.h"
+
+#include <btc.h>
 #include <nan.h>
 
-using namespace v8;
+using v8::String;
+using v8::FunctionTemplate;
+using v8::Function;
+using v8::Array;
+using v8::Number;
 
 namespace Btc {
     namespace Syntax {
@@ -27,7 +32,7 @@ namespace Btc {
 
     class Parser {
     public:
-        Parser(): text(text) {
+        Parser() {
             btc_tokenizer_init(&tokenizer);
         }
         ~Parser() {
@@ -55,7 +60,6 @@ namespace Btc {
         }
     private:
         int status;
-        const char* text;
         btc_parser* parser;
         btc_tokenizer* tokenizer;
     };
@@ -182,7 +186,7 @@ void CopyCommentsList(btc_comments_list* list, Local<Array> out) {
         } else {
             char error[128];
             sprintf(error, "Unhandled ast item: %d\n", comment->token_type);
-            fprintf(stderr, error);
+            fprintf(stderr, "%s", error);
             Nan::ThrowError(error);
             break;
         }
@@ -247,7 +251,7 @@ void Btc::ConvertAstItem(btc_ast_item* item, Local<Object> result) {
             break;
         default:
             type = NULL;
-            fprintf(stderr, "invalid ast item = %d (line number = %d)\n", item->type, item->range.start_line_number);
+            fprintf(stderr, "invalid ast item = %d (line number = %zu)\n", item->type, item->range.start_line_number);
             Nan::ThrowError("Received invalid ast item type");
     }
 
@@ -266,14 +270,8 @@ NAN_METHOD(Ast::Parse) {
     Nan::HandleScope scope;
     Btc::Parser* parser = new Btc::Parser();
 
-    Local<String> jsText = Nan::To<String>(info[0]).ToLocalChecked();
-    int length = jsText->Utf8Length();
-    char* text = (char*)malloc(length + 1);
-    jsText->WriteUtf8(text, length);
-    text[length] = '\0';
-
-    parser->Parse(text);
-    free(text);
+    Nan::Utf8String string(Nan::To<String>(info[0]).ToLocalChecked());
+    parser->Parse(*string);
 
     if(parser->Failed()) {
         parser->PrintFailure();
@@ -284,6 +282,7 @@ NAN_METHOD(Ast::Parse) {
     Local<Array> output = Nan::New<Array>();
     ConvertLinkedAstList(parser->GetResult(), output);
 
+    delete parser;
     info.GetReturnValue().Set(output);
 }
 
