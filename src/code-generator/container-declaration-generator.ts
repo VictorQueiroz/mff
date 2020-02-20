@@ -60,12 +60,12 @@ export default class ContainerDeclarationGenerator extends CodeGeneratorChild {
 
                 /* container body */
                 write(
-                    `public static decode(deserializer: Deserializer, ignoreHeader = true): ${interfaceName} {\n`,
+                    `public static decode(deserializer: Deserializer, ignoreHeader = false): ${interfaceName} {\n`,
                     () => append(this.createDecodingStatements(item)),
                     '}\n'
                 );
                 write(
-                    'public encode(serializer: Serializer, ignoreHeader = true): void {\n',
+                    'public encode(serializer: Serializer, ignoreHeader = false): void {\n',
                     () => append(this.createEncodingStatements(item)),
                     '}\n'
                 );
@@ -176,7 +176,7 @@ export default class ContainerDeclarationGenerator extends CodeGeneratorChild {
         }
         const {write, valueOf, append} = new CodeStream(this);
         const container = this.getContainer(node.name);
-        write('if(ignoreHeader !== true) {\n', () => {
+        write('if(!ignoreHeader) {\n', () => {
             write('const id = deserializer.readUInt32();\n');
             write(`if(${container.id} !== id) {\n`, () => {
                 write(

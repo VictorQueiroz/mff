@@ -61,8 +61,8 @@ export namespace comment {
             super(2436497117, "comment.comment");
             this.text = params.text;
         }
-        public static decode(deserializer: Deserializer, ignoreHeader = true): Comment {
-            if(ignoreHeader !== true) {
+        public static decode(deserializer: Deserializer, ignoreHeader = false): Comment {
+            if(!ignoreHeader) {
                 const id = deserializer.readUInt32();
                 if(2436497117 !== id) {
                     throw new Error(
@@ -76,7 +76,7 @@ export namespace comment {
                 "text": v_3638045649 /* text */
             });
         }
-        public encode(serializer: Serializer, ignoreHeader = true): void {
+        public encode(serializer: Serializer, ignoreHeader = false): void {
             if(ignoreHeader != true) serializer.writeUInt32(2436497117);
             serializer.writeString(this.text);
         }
@@ -116,8 +116,8 @@ export class Post extends TPost implements IPostParams {
         this.id = params.id;
         this.comments = params.comments;
     }
-    public static decode(deserializer: Deserializer, ignoreHeader = true): Post {
-        if(ignoreHeader !== true) {
+    public static decode(deserializer: Deserializer, ignoreHeader = false): Post {
+        if(!ignoreHeader) {
             const id = deserializer.readUInt32();
             if(1337348122 !== id) {
                 throw new Error(
@@ -140,7 +140,7 @@ export class Post extends TPost implements IPostParams {
             "comments": v_3215616698 /* comments */
         });
     }
-    public encode(serializer: Serializer, ignoreHeader = true): void {
+    public encode(serializer: Serializer, ignoreHeader = false): void {
         if(ignoreHeader != true) serializer.writeUInt32(1337348122);
         serializer.writeUInt64(this.id);
         serializer.writeUInt32(this.comments.length);
@@ -181,8 +181,8 @@ export class UsersResult extends TUsersResult implements IUsersResultParams {
         super(3368171798, "usersResult");
         this.users = params.users;
     }
-    public static decode(deserializer: Deserializer, ignoreHeader = true): UsersResult {
-        if(ignoreHeader !== true) {
+    public static decode(deserializer: Deserializer, ignoreHeader = false): UsersResult {
+        if(!ignoreHeader) {
             const id = deserializer.readUInt32();
             if(3368171798 !== id) {
                 throw new Error(
@@ -204,7 +204,7 @@ export class UsersResult extends TUsersResult implements IUsersResultParams {
             "users": v_2356665039 /* users */
         });
     }
-    public encode(serializer: Serializer, ignoreHeader = true): void {
+    public encode(serializer: Serializer, ignoreHeader = false): void {
         if(ignoreHeader != true) serializer.writeUInt32(3368171798);
         serializer.writeUInt32(this.users.size);
         for(const [key, value] of this.users) {
@@ -256,8 +256,8 @@ export class User extends TUser implements IUserParams {
         this.address = params.address;
         this.posts = params.posts;
     }
-    public static decode(deserializer: Deserializer, ignoreHeader = true): User {
-        if(ignoreHeader !== true) {
+    public static decode(deserializer: Deserializer, ignoreHeader = false): User {
+        if(!ignoreHeader) {
             const id = deserializer.readUInt32();
             if(1151324927 !== id) {
                 throw new Error(
@@ -293,14 +293,14 @@ export class User extends TUser implements IUserParams {
             "posts": v_178372132 /* posts */
         });
     }
-    public encode(serializer: Serializer, ignoreHeader = true): void {
+    public encode(serializer: Serializer, ignoreHeader = false): void {
         if(ignoreHeader != true) serializer.writeUInt32(1151324927);
         const v_89370520 = this.id;
         if(v_89370520) {
             serializer.writeUInt8(1);
-            const v_2263711929 /* v_89370520 */ = v_89370520;
-            serializer.writeUInt32(v_2263711929 /* v_89370520 */.length);
-            serializer.writeBuffer(v_2263711929 /* v_89370520 */);
+            const v_2248421716 /* v_89370520 */ = v_89370520;
+            serializer.writeUInt32(v_2248421716 /* v_89370520 */.length);
+            serializer.writeBuffer(v_2248421716 /* v_89370520 */);
         }
         else 
         {
@@ -361,8 +361,8 @@ export class Msg extends TMsg implements IMsgParams {
         this.id = params.id;
         this.body = params.body;
     }
-    public static decode(deserializer: Deserializer, ignoreHeader = true): Msg {
-        if(ignoreHeader !== true) {
+    public static decode(deserializer: Deserializer, ignoreHeader = false): Msg {
+        if(!ignoreHeader) {
             const id = deserializer.readUInt32();
             if(3553105559 !== id) {
                 throw new Error(
@@ -379,12 +379,12 @@ export class Msg extends TMsg implements IMsgParams {
             "body": v_980539595 /* body */
         });
     }
-    public encode(serializer: Serializer, ignoreHeader = true): void {
+    public encode(serializer: Serializer, ignoreHeader = false): void {
         if(ignoreHeader != true) serializer.writeUInt32(3553105559);
         serializer.writeInt64(this.id);
-        const v_3485804888 /* this.body */ = this.body;
-        serializer.writeUInt32(v_3485804888 /* this.body */.length);
-        serializer.writeBuffer(v_3485804888 /* this.body */);
+        const v_900547755 /* this.body */ = this.body;
+        serializer.writeUInt32(v_900547755 /* this.body */.length);
+        serializer.writeBuffer(v_900547755 /* this.body */);
     }
     public copy(params: Partial<IMsgParams>): Msg {
         let changed = false;
@@ -423,8 +423,8 @@ export namespace geo {
             super(2869024212, "geo.URL");
             this.href = params.href;
         }
-        public static decode(deserializer: Deserializer, ignoreHeader = true): URL {
-            if(ignoreHeader !== true) {
+        public static decode(deserializer: Deserializer, ignoreHeader = false): URL {
+            if(!ignoreHeader) {
                 const id = deserializer.readUInt32();
                 if(2869024212 !== id) {
                     throw new Error(
@@ -438,7 +438,7 @@ export namespace geo {
                 "href": v_1226681949 /* href */
             });
         }
-        public encode(serializer: Serializer, ignoreHeader = true): void {
+        public encode(serializer: Serializer, ignoreHeader = false): void {
             if(ignoreHeader != true) serializer.writeUInt32(2869024212);
             serializer.writeString(this.href);
         }
@@ -467,8 +467,8 @@ export namespace geo {
             this.protocol = params.protocol;
             this.port = params.port;
         }
-        public static decode(deserializer: Deserializer, ignoreHeader = true): URLComplex {
-            if(ignoreHeader !== true) {
+        public static decode(deserializer: Deserializer, ignoreHeader = false): URLComplex {
+            if(!ignoreHeader) {
                 const id = deserializer.readUInt32();
                 if(155397982 !== id) {
                     throw new Error(
@@ -485,7 +485,7 @@ export namespace geo {
                 "port": v_3433894430 /* port */
             });
         }
-        public encode(serializer: Serializer, ignoreHeader = true): void {
+        public encode(serializer: Serializer, ignoreHeader = false): void {
             if(ignoreHeader != true) serializer.writeUInt32(155397982);
             serializer.writeString(this.protocol);
             serializer.writeUInt16(this.port);
@@ -577,8 +577,8 @@ export namespace geo {
                 this.streetNumber = params.streetNumber;
                 this.url = params.url;
             }
-            public static decode(deserializer: Deserializer, ignoreHeader = true): Address {
-                if(ignoreHeader !== true) {
+            public static decode(deserializer: Deserializer, ignoreHeader = false): Address {
+                if(!ignoreHeader) {
                     const id = deserializer.readUInt32();
                     if(113438874 !== id) {
                         throw new Error(
@@ -598,7 +598,7 @@ export namespace geo {
                     "url": v_2790903919 /* url */
                 });
             }
-            public encode(serializer: Serializer, ignoreHeader = true): void {
+            public encode(serializer: Serializer, ignoreHeader = false): void {
                 if(ignoreHeader != true) serializer.writeUInt32(113438874);
                 serializer.writeString(this.streetName);
                 serializer.writeUInt32(this.streetNumber);
@@ -625,8 +625,8 @@ export namespace geo {
             {
                 super(2790540781, "geo.data.addressEmpty");
             }
-            public static decode(deserializer: Deserializer, ignoreHeader = true): AddressEmpty {
-                if(ignoreHeader !== true) {
+            public static decode(deserializer: Deserializer, ignoreHeader = false): AddressEmpty {
+                if(!ignoreHeader) {
                     const id = deserializer.readUInt32();
                     if(2790540781 !== id) {
                         throw new Error(
@@ -636,7 +636,7 @@ export namespace geo {
                 }
                 return new AddressEmpty();
             }
-            public encode(serializer: Serializer, ignoreHeader = true): void {
+            public encode(serializer: Serializer, ignoreHeader = false): void {
                 if(ignoreHeader != true) serializer.writeUInt32(2790540781);
             }
             public copy(): AddressEmpty {

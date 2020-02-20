@@ -2,7 +2,7 @@
 import Long from "long";
 export namespace comment {
     export type TComment = Comment;
-    interface Comment {
+    export interface Comment {
         readonly _id?: 0x9139fedd;
         readonly _type?: "comment.Comment";
         readonly _name: "comment.comment";
@@ -10,7 +10,7 @@ export namespace comment {
     }
 }
 export type TPost = Post;
-interface Post {
+export interface Post {
     readonly _id?: 0x4fb6501a;
     readonly _type?: "Post";
     readonly _name: "post";
@@ -18,14 +18,14 @@ interface Post {
     readonly comments: Array<comment.TComment>;
 }
 export type TUsersResult = UsersResult;
-interface UsersResult {
+export interface UsersResult {
     readonly _id?: 0xc8c23916;
     readonly _type?: "UsersResult";
     readonly _name: "usersResult";
     readonly users: Map<number, TUser>;
 }
 export type TUser = User;
-interface User {
+export interface User {
     readonly _id?: 0x449fd2ff;
     readonly _type?: "User";
     readonly _name: "user";
@@ -36,7 +36,7 @@ interface User {
     readonly posts: Array<TPost>;
 }
 export type TMsg = Msg;
-interface Msg {
+export interface Msg {
     readonly _id?: 0xd3c81697;
     readonly _type?: "Msg";
     readonly _name: "msg";
@@ -45,13 +45,13 @@ interface Msg {
 }
 export namespace geo {
     export type TTURL = URL | URLComplex;
-    interface URL {
+    export interface URL {
         readonly _id?: 0xab01d5d4;
         readonly _type?: "geo.TURL";
         readonly _name: "geo.URL";
         readonly href: string;
     }
-    interface URLComplex {
+    export interface URLComplex {
         readonly _id?: 0x9432f5e;
         readonly _type?: "geo.TURL";
         readonly _name: "geo.URLComplex";
@@ -60,7 +60,7 @@ export namespace geo {
     }
     export namespace data {
         export type TAddress = Address | AddressEmpty;
-        interface Address {
+        export interface Address {
             readonly _id?: 0x6c2f09a;
             readonly _type?: "geo.data.Address";
             readonly _name: "geo.data.address";
@@ -80,7 +80,7 @@ export namespace geo {
              */
             readonly url: TTURL;
         }
-        interface AddressEmpty {
+        export interface AddressEmpty {
             readonly _id?: 0xa65445ed;
             readonly _type?: "geo.data.Address";
             readonly _name: "geo.data.addressEmpty";
