@@ -1,6 +1,6 @@
 import { Node, NodeContainerParam, NodeContainerGroup } from './node';
 import ContextScanner from './context-scanner';
-import * as crc from 'cyclic-rc';
+import crc from 'cyclic-rc';
 
 // Default template processors
 import VectorProcessor from './vector-processor';

@@ -1,4 +1,4 @@
-import * as crc from 'cyclic-rc';
+import crc from 'cyclic-rc';
 import {
     Node,
     NodeContainerDeclaration,
