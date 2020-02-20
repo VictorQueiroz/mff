@@ -11,3 +11,5 @@ cmake-build-*/
 .idea/**/dictionaries
 .idea/**/shelf
 .nyc_output/
+.clangd/
+compile_commands.json
