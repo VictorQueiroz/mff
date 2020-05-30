@@ -15,7 +15,7 @@
     "utility-types": "^3.4.1"
   },
   "name": "message-ff",
-  "version": "3.0.2",
+  "version": "3.0.4",
   "license": "MIT",
   "keywords": [
     "binary",
