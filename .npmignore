@@ -7,10 +7,7 @@ build/
 .history/
 dist/
 .vscode/
-deps/btc/.git/
-deps/btc/.gitmodules
-deps/btc/deps/cvector/.git/
-deps/btc/deps/cvector/.gitmodules
+deps/**/*/{.git*,.idea}/**/*
 cmake-build-*/
 .idea/
 .gitmodules
