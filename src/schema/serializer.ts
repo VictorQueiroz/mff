@@ -4,11 +4,16 @@ export default class Serializer {
     private buffer: ArrayBuffer;
     private view: Buffer;
     private offset: number = 0;
-    private memoryGrowthAmount = 1024*4;
+    private memoryGrowthAmount: number;
 
-    constructor(private length: number = 1024) {
+    constructor(private length = 1 * 1024 * 1024) {
+        this.memoryGrowthAmount = this.length;
         this.buffer = new ArrayBuffer(this.length);
         this.view = Buffer.from(this.buffer);
+    }
+
+    public reset() {
+        this.offset = 0;
     }
 
     public getBuffer() {
