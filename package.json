@@ -15,7 +15,7 @@
     "utility-types": "^3.10.0"
   },
   "name": "message-ff",
-  "version": "3.0.9",
+  "version": "3.0.10",
   "license": "MIT",
   "keywords": [
     "binary",
@@ -40,7 +40,12 @@
     "long": "^4.0.0",
     "nan": "^2.14.2"
   },
-  "files": ["deps", "src", "lib"],
+  "files": [
+    "deps",
+    "src/**/*.{h,cc}",
+    "lib",
+    "CMakeLists.txt"
+  ],
   "nyc": {
     "extension": [
       ".ts"
