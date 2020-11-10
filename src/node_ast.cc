@@ -70,8 +70,8 @@ namespace Btc {
 void ConvertTypeAlias(btc_alias alias, Local<Object> result) {
     Local<Object> value = Nan::New<Object>();
 
-    result->Set(Nan::New<String>("value").ToLocalChecked(), value);
-    result->Set(Nan::New<String>("name").ToLocalChecked(), Nan::New<String>(alias.name.value).ToLocalChecked());
+    Nan::Set(result, Nan::New<String>("value").ToLocalChecked(), value);
+    Nan::Set(result, Nan::New<String>("name").ToLocalChecked(), Nan::New<String>(alias.name.value).ToLocalChecked());
     Btc::ConvertAstItem(alias.value, value);
 }
 
@@ -82,7 +82,7 @@ void ConvertLinkedAstList(btc_ast_list* list, Local<Array> output) {
         node = btc_ast_list_get(list, i);
         item = Nan::New<Object>();
         Btc::ConvertAstItem(node, item);
-        output->Set(Nan::New<Number>(output->Length()), item);
+        Nan::Set(output, Nan::New<Number>(output->Length()), item);
     }
 }
 
@@ -91,8 +91,8 @@ void ConvertContainerGroup(btc_ast_container_group_declaration* group, Local<Obj
 
     ConvertLinkedAstList(group->body, body);
 
-    output->Set(Nan::New<String>("body").ToLocalChecked(), body);
-    output->Set(Nan::New<String>("name").ToLocalChecked(), Nan::New<String>(group->type.value).ToLocalChecked());
+    Nan::Set(output, Nan::New<String>("body").ToLocalChecked(), body);
+    Nan::Set(output, Nan::New<String>("name").ToLocalChecked(), Nan::New<String>(group->type.value).ToLocalChecked());
 }
 
 void ConvertContainerDeclaration(btc_ast_container_declaration* container, Local<Object> output) {
@@ -100,9 +100,9 @@ void ConvertContainerDeclaration(btc_ast_container_declaration* container, Local
 
     ConvertLinkedAstList(container->body, body);
 
-    output->Set(Nan::New<String>("name").ToLocalChecked(), Nan::New<String>(container->name.value).ToLocalChecked());
-    output->Set(Nan::New<String>("containerType").ToLocalChecked(), Nan::New<String>(container->type.value).ToLocalChecked());
-    output->Set(Nan::New<String>("body").ToLocalChecked(), body);
+    Nan::Set(output, Nan::New<String>("name").ToLocalChecked(), Nan::New<String>(container->name.value).ToLocalChecked());
+    Nan::Set(output, Nan::New<String>("containerType").ToLocalChecked(), Nan::New<String>(container->type.value).ToLocalChecked());
+    Nan::Set(output, Nan::New<String>("body").ToLocalChecked(), body);
 }
 
 void ConvertContainerParam(btc_ast_container_param* item, Local<Object> output){
@@ -113,15 +113,15 @@ void ConvertContainerParam(btc_ast_container_param* item, Local<Object> output){
     if(item->default_value != nullptr) {
         Local<Object> defaultValue = Nan::New<Object>();
         Btc::ConvertAstItem(item->default_value, defaultValue);
-        output->Set(Nan::New<String>("default").ToLocalChecked(), defaultValue);
+        Nan::Set(output, Nan::New<String>("default").ToLocalChecked(), defaultValue);
     }
 
-    output->Set(Nan::New<String>("paramType").ToLocalChecked(), type);
-    output->Set(Nan::New<String>("name").ToLocalChecked(), Nan::New<String>(item->name.value).ToLocalChecked());
+    Nan::Set(output, Nan::New<String>("paramType").ToLocalChecked(), type);
+    Nan::Set(output, Nan::New<String>("name").ToLocalChecked(), Nan::New<String>(item->name.value).ToLocalChecked());
 }
 
 void ConvertIdentifier(btc_ast_identifier id, Local<Object> value) {
-    value->Set(Nan::New<String>("value").ToLocalChecked(), Nan::New<String>(id.value).ToLocalChecked());
+    Nan::Set(value, Nan::New<String>("value").ToLocalChecked(), Nan::New<String>(id.value).ToLocalChecked());
 }
 
 void ConvertTemplate(btc_template* tmpl, Local<Object> result) {
@@ -129,20 +129,20 @@ void ConvertTemplate(btc_template* tmpl, Local<Object> result) {
 
     ConvertLinkedAstList(tmpl->arguments, arguments);
 
-    result->Set(Nan::New<String>("name").ToLocalChecked(), Nan::New<String>(tmpl->name.value).ToLocalChecked());
-    result->Set(Nan::New<String>("arguments").ToLocalChecked(), arguments);
+    Nan::Set(result, Nan::New<String>("name").ToLocalChecked(), Nan::New<String>(tmpl->name.value).ToLocalChecked());
+    Nan::Set(result, Nan::New<String>("arguments").ToLocalChecked(), arguments);
 }
 
 void ConvertImportDeclaration(btc_import_declaration import, Local<Object> result) {
-    result->Set(Nan::New<String>("path").ToLocalChecked(), Nan::New<String>(import.path.value).ToLocalChecked());
+    Nan::Set(result, Nan::New<String>("path").ToLocalChecked(), Nan::New<String>(import.path.value).ToLocalChecked());
 }
 
 void ConvertLiteralNumber(btc_number number, Local<Object> result) {   
-    result->Set(Nan::New<String>("value").ToLocalChecked(), Nan::New<Number>(number.value));
+    Nan::Set(result, Nan::New<String>("value").ToLocalChecked(), Nan::New<Number>(number.value));
 }
 
 void ConvertLiteralString(btc_string string, Local<Object> result) {
-    result->Set(Nan::New<String>("value").ToLocalChecked(), Nan::New<String>(string.value).ToLocalChecked());
+    Nan::Set(result, Nan::New<String>("value").ToLocalChecked(), Nan::New<String>(string.value).ToLocalChecked());
 }
 
 void ConvertNamespace(btc_namespace* namespace_i, Local<Object> result) {
@@ -150,8 +150,8 @@ void ConvertNamespace(btc_namespace* namespace_i, Local<Object> result) {
 
     ConvertLinkedAstList(namespace_i->body, body);
 
-    result->Set(Nan::New<String>("body").ToLocalChecked(), body);
-    result->Set(Nan::New<String>("name").ToLocalChecked(), Nan::New<String>(namespace_i->name.value).ToLocalChecked());
+    Nan::Set(result, Nan::New<String>("body").ToLocalChecked(), body);
+    Nan::Set(result, Nan::New<String>("name").ToLocalChecked(), Nan::New<String>(namespace_i->name.value).ToLocalChecked());
 }
 
 void ConvertMemberExpression(btc_member_expression* expr, Local<Object> result) {
@@ -159,8 +159,8 @@ void ConvertMemberExpression(btc_member_expression* expr, Local<Object> result) 
 
     Btc::ConvertAstItem(expr->left, left);
     
-    result->Set(Nan::New<String>("left").ToLocalChecked(), left);
-    result->Set(Nan::New<String>("right").ToLocalChecked(), Nan::New<String>(expr->right.value).ToLocalChecked());
+    Nan::Set(result, Nan::New<String>("left").ToLocalChecked(), left);
+    Nan::Set(result, Nan::New<String>("right").ToLocalChecked(), Nan::New<String>(expr->right.value).ToLocalChecked());
 }
 
 void ConvertTemplateDeclaration(btc_template_declaration* item, Local<Object> result) {
@@ -170,8 +170,8 @@ void ConvertTemplateDeclaration(btc_template_declaration* item, Local<Object> re
     Local<Object> body = Nan::New<Object>();
     Btc::ConvertAstItem(item->body, body);
 
-    result->Set(Nan::New<String>("arguments").ToLocalChecked(), arguments);
-    result->Set(Nan::New<String>("body").ToLocalChecked(), body);
+    Nan::Set(result, Nan::New<String>("arguments").ToLocalChecked(), arguments);
+    Nan::Set(result, Nan::New<String>("body").ToLocalChecked(), body);
 }
 
 void CopyCommentsList(btc_comments_list* list, Local<Array> out) {
@@ -191,9 +191,9 @@ void CopyCommentsList(btc_comments_list* list, Local<Array> out) {
             break;
         }
         Local<Object> object = Nan::New<Object>();
-        object->Set(Nan::New<String>("type").ToLocalChecked(), comment_type);
-        object->Set(Nan::New<String>("value").ToLocalChecked(), Nan::New<String>(comment->value).ToLocalChecked());
-        out->Set(i, object);
+        Nan::Set(object, Nan::New<String>("type").ToLocalChecked(), comment_type);
+        Nan::Set(object, Nan::New<String>("value").ToLocalChecked(), Nan::New<String>(comment->value).ToLocalChecked());
+        Nan::Set(out, i, object);
     }
 }
 
@@ -260,9 +260,9 @@ void Btc::ConvertAstItem(btc_ast_item* item, Local<Object> result) {
         Local<Array> trailingComments = Nan::New<Array>();
         CopyCommentsList(item->leading_comments, leadingComments);
         CopyCommentsList(item->trailing_comments, trailingComments);
-        result->Set(Nan::New<String>("leadingComments").ToLocalChecked(), leadingComments);
-        result->Set(Nan::New<String>("trailingComments").ToLocalChecked(), trailingComments);
-        result->Set(Nan::New<String>("type").ToLocalChecked(), Nan::New<String>(type).ToLocalChecked());
+        Nan::Set(result, Nan::New<String>("leadingComments").ToLocalChecked(), leadingComments);
+        Nan::Set(result, Nan::New<String>("trailingComments").ToLocalChecked(), trailingComments);
+        Nan::Set(result, Nan::New<String>("type").ToLocalChecked(), Nan::New<String>(type).ToLocalChecked());
     }
 }
 

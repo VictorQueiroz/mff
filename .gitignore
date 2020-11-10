@@ -13,3 +13,4 @@ cmake-build-*/
 .nyc_output/
 .clangd/
 compile_commands.json
+.cache/

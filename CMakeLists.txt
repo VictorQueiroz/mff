@@ -8,7 +8,13 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_subdirectory(deps/btc)
 
 add_library(btcjs SHARED src/node_ast.cc)
-target_include_directories(btcjs PRIVATE src deps/btc/src node_modules/nan $ENV{NODE_PATH}/include/node)
+target_include_directories(
+    btcjs PRIVATE
+    src
+    ${CMAKE_CURRENT_SOURCE_DIR}/deps/btc/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/node_modules/nan
+    $ENV{NODE_INSTALL_DIR}/include/node
+)
 target_compile_options(btcjs PRIVATE -fPIC)
 target_link_libraries(btcjs PRIVATE ${CMAKE_JS_LIB} btc)
 
