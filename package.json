@@ -15,7 +15,7 @@
     "utility-types": "^3.10.0"
   },
   "name": "message-ff",
-  "version": "3.0.10",
+  "version": "3.0.11",
   "license": "MIT",
   "keywords": [
     "binary",
@@ -38,7 +38,8 @@
     "cmake-js": "^6.1.0",
     "cyclic-rc": "^2.0.11",
     "long": "^4.0.0",
-    "nan": "^2.14.2"
+    "nan": "^2.14.2",
+    "tslib": "^2.3.1"
   },
   "files": [
     "deps",
